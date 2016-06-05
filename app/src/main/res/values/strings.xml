@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">SuperCalendar</string>
+    <string name="action_reload">Reload Todos</string>
+
+    <string name="add_name">Name</string>
+    <string name="add_decription">Description</string>
+    <string name="add_completed">Completed</string>
+    <string name="add_save">Save ToDo</string>
+
+</resources>
