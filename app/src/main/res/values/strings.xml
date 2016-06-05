@@ -7,4 +7,7 @@
     <string name="add_completed">Completed</string>
     <string name="add_save">Save ToDo</string>
 
+    <string name="toast_todo_added">ToDo added</string>
+    <string name="toast_todo_updated">ToDo updated</string>
+
 </resources>

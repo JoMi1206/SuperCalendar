@@ -44,12 +44,12 @@ public class AddTodoActivity extends AppCompatActivity implements Callback<TodoI
         boolean mode_add = this.getIntent().getExtras().getBoolean("Mode_Add");
         if(mode_add) {
             mode = Mode.ADD;
-            mNameEditText.setEnabled(true);
-            mDescriptionNote.setEnabled(true);
+//            mNameEditText.setEnabled(true);
+//            mDescriptionNote.setEnabled(true);
         } else {
             mode = Mode.UPDATE;
-            mNameEditText.setEnabled(false);
-            mDescriptionNote.setEnabled(false);
+//            mNameEditText.setEnabled(false);
+//            mDescriptionNote.setEnabled(false);
         }
 
         if(mode == Mode.UPDATE) {
@@ -87,11 +87,8 @@ public class AddTodoActivity extends AppCompatActivity implements Callback<TodoI
 
             Call<TodoItem> call = todoAPI.postTodo(item);
 
-            setProgressBarIndeterminateVisibility(true);
-            setProgressBarVisibility(true);
             call.enqueue(this);
         } else {
-            //TODO: Just update the Item with the saved id!!!
 
             String name = mNameEditText.getText().toString();
             String description = mDescriptionNote.getText().toString();
@@ -103,10 +100,8 @@ public class AddTodoActivity extends AppCompatActivity implements Callback<TodoI
 
             TodoAPI todoAPI = retrofit.create(TodoAPI.class);
 
-            Call<TodoItem> call = todoAPI.postTodo(item);
+            Call<TodoItem> call = todoAPI.putTodo(todoId,item);
 
-            setProgressBarIndeterminateVisibility(true);
-            setProgressBarVisibility(true);
             call.enqueue(this);
         }
 
@@ -114,9 +109,11 @@ public class AddTodoActivity extends AppCompatActivity implements Callback<TodoI
 
     @Override
     public void onResponse(Call<TodoItem> call, Response<TodoItem> response) {
-        setProgressBarIndeterminateVisibility(false);
-        setProgressBarVisibility(false);
-        Toast.makeText(AddTodoActivity.this, "Todo added", Toast.LENGTH_SHORT).show();
+        if(mode == Mode.ADD) {
+            Toast.makeText(AddTodoActivity.this, R.string.toast_todo_added, Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(AddTodoActivity.this, R.string.toast_todo_updated, Toast.LENGTH_SHORT).show();
+        }
 
         Intent result = new Intent();
         setResult(RESULT_OK, result);
@@ -126,8 +123,6 @@ public class AddTodoActivity extends AppCompatActivity implements Callback<TodoI
 
     @Override
     public void onFailure(Call<TodoItem> call, Throwable t) {
-        setProgressBarIndeterminateVisibility(false);
-        setProgressBarVisibility(false);
         Toast.makeText(AddTodoActivity.this, t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
     }
 }

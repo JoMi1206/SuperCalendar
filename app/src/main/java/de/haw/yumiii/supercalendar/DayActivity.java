@@ -32,6 +32,7 @@ public class DayActivity extends AppCompatActivity implements Callback<List<Todo
     private ListView mListView;
 
     private final int ADD_TASK_REQUEST = 1;
+    private final int UPDATE_TASK_REQUEST = 2;
 
     private List<TodoItem> todoItemList = new ArrayList<>();
 
@@ -79,7 +80,7 @@ public class DayActivity extends AppCompatActivity implements Callback<List<Todo
                 detailIntent.putExtra("note", selectedTodo.getNote());
                 detailIntent.putExtra("completed", selectedTodo.isCompleted());
 
-                startActivity(detailIntent);
+                startActivityForResult(detailIntent, UPDATE_TASK_REQUEST);
             }
         });
     }
@@ -118,7 +119,7 @@ public class DayActivity extends AppCompatActivity implements Callback<List<Todo
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == ADD_TASK_REQUEST) {
+        if(requestCode == ADD_TASK_REQUEST || requestCode == UPDATE_TASK_REQUEST) {
             if(resultCode == RESULT_OK) {
                 loadTodoItems();
             }
