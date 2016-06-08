@@ -1,10 +1,13 @@
 <resources>
     <string name="app_name">SuperCalendar</string>
     <string name="action_reload">Reload Todos</string>
+    <string name="action_choose_date">Choose Date</string>
 
     <string name="add_name">Name</string>
     <string name="add_decription">Description</string>
     <string name="add_completed">Completed</string>
+    <string name="add_date">Due Date</string>
+    <string name="add_date_hint">Click to enter due date</string>
     <string name="add_save">Save ToDo</string>
 
     <string name="toast_todo_added">ToDo added</string>

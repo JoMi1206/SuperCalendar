@@ -10,6 +10,7 @@ import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -69,7 +70,8 @@ public class TodoAdapter extends BaseAdapter {
 
         TodoItem todo =(TodoItem) getItem(position);
 
-        nameTextView.setText(todo.getName());
+        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
+        nameTextView.setText(todo.getName() + " Fällig: " + sdf.format(todo.getDate()));
         if(todo.isCompleted()) {
             nameTextView.setPaintFlags(nameTextView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
         }

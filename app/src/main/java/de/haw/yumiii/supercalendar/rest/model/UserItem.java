@@ -11,6 +11,14 @@ public class UserItem {
     protected String note;
     protected Date date;
 
+    public UserItem() {
+    }
+
+    public UserItem(String note, Date date) {
+        this.note = note;
+        this.date = date;
+    }
+
     public String get_id() {
         return _id;
     }

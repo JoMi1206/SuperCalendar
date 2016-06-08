@@ -1,5 +1,7 @@
 package de.haw.yumiii.supercalendar.rest.model;
 
+import java.util.Date;
+
 /**
  * Created by Yumiii on 22.05.16.
  */
@@ -15,12 +17,13 @@ public class TodoItem extends UserItem {
 
 
     public TodoItem() {
+        super();
     }
 
-    public TodoItem(String name, boolean completed, String note) {
+    public TodoItem(String name, boolean completed, String note, Date date) {
+        super(note, date);
         this.name = name;
         this.completed = completed;
-        this.note = note;
     }
 
 

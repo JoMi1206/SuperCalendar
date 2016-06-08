@@ -2,9 +2,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="de.haw.yumiii.supercalendar.DayActivity">
+
+    <item
+        android:id="@+id/action_choosedate"
+        android:icon="@drawable/ic_date_range"
+        android:title="@string/action_choose_date"
+        app:showAsAction="ifRoom"/>
+
     <item
         android:id="@+id/action_reload"
         android:orderInCategory="100"
+        android:icon="@drawable/ic_action_reload"
         android:title="@string/action_reload"
-        app:showAsAction="never" />
+        app:showAsAction="ifRoom" />
 </menu>

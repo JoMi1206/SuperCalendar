@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -16,7 +17,10 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import de.haw.yumiii.supercalendar.rest.api.TodoAPI;
@@ -27,7 +31,10 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class DayActivity extends AppCompatActivity implements Callback<List<TodoItem>> {
+public class DayActivity extends AppCompatActivity implements Callback<List<TodoItem>>, DatePickerFragment.OnFragmentDateSetListener {
+
+    private Date currentDate = new Date();
+    SimpleDateFormat sdf = new SimpleDateFormat(Settings.DATE_FORMAT);
 
     private ListView mListView;
 
@@ -43,13 +50,15 @@ public class DayActivity extends AppCompatActivity implements Callback<List<Todo
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        setTitle(sdf.format(currentDate));
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(DayActivity.this, AddTodoActivity.class);
 
-                intent.putExtra("Mode_Add", true);
+                intent.putExtra(AddTodoActivity.PARAM_MODE, true);
 
                 startActivityForResult(intent, ADD_TASK_REQUEST);
             }
@@ -73,12 +82,14 @@ public class DayActivity extends AppCompatActivity implements Callback<List<Todo
                 TodoItem selectedTodo = todoItemList.get(position);
 
                 Intent detailIntent = new Intent(context, AddTodoActivity.class);
-                detailIntent.putExtra("Mode_Add", false);
+                detailIntent.putExtra(AddTodoActivity.PARAM_MODE, false);
 
-                detailIntent.putExtra("id", selectedTodo.get_id());
-                detailIntent.putExtra("name", selectedTodo.getName());
-                detailIntent.putExtra("note", selectedTodo.getNote());
-                detailIntent.putExtra("completed", selectedTodo.isCompleted());
+                detailIntent.putExtra(AddTodoActivity.PARAM_ID, selectedTodo.get_id());
+                detailIntent.putExtra(AddTodoActivity.PARAM_NAME, selectedTodo.getName());
+                detailIntent.putExtra(AddTodoActivity.PARAM_NOTE, selectedTodo.getNote());
+                SimpleDateFormat sdf = new SimpleDateFormat(Settings.DATE_FORMAT);
+                detailIntent.putExtra(AddTodoActivity.PARAM_DATE, sdf.format(selectedTodo.getDate()));
+                detailIntent.putExtra(AddTodoActivity.PARAM_COMPLETED, selectedTodo.isCompleted());
 
                 startActivityForResult(detailIntent, UPDATE_TASK_REQUEST);
             }
@@ -114,13 +125,45 @@ public class DayActivity extends AppCompatActivity implements Callback<List<Todo
             return true;
         }
 
+        if (id == R.id.action_choosedate) {
+            showDatePickerDialog(findViewById(android.R.id.content));
+            return true;
+        }
+
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showDatePickerDialog(View v) {
+        DialogFragment newFragment = new DatePickerFragment();
+        Bundle args = new Bundle();
+
+        Calendar cal = Calendar.getInstance();
+
+        cal.setTime(currentDate);
+
+        int year = cal.get(Calendar.YEAR);
+        int month = cal.get(Calendar.MONTH);
+        int day = cal.get(Calendar.DAY_OF_MONTH);
+
+        args.putInt(DatePickerFragment.ARG_YEAR, year);
+        args.putInt(DatePickerFragment.ARG_MONTH, month);
+        args.putInt(DatePickerFragment.ARG_DAY, day);
+
+        newFragment.setArguments(args);
+        newFragment.show(getSupportFragmentManager(), "datePicker");
+    }
+
+    @Override
+    public void onFragmentDateSetListener(Date newDate) {
+        currentDate = newDate;
+        setTitle(sdf.format(currentDate));
+        //TODO reload items
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == ADD_TASK_REQUEST || requestCode == UPDATE_TASK_REQUEST) {
-            if(resultCode == RESULT_OK) {
+        if (requestCode == ADD_TASK_REQUEST || requestCode == UPDATE_TASK_REQUEST) {
+            if (resultCode == RESULT_OK) {
                 loadTodoItems();
             }
         }
@@ -128,7 +171,7 @@ public class DayActivity extends AppCompatActivity implements Callback<List<Todo
 
     @Override
     public void onResponse(Call<List<TodoItem>> call, Response<List<TodoItem>> response) {
-        Log.d("MyAPP", "onResponse called!");
+        Log.d("MyApp", "onResponse called!");
 
         TodoAdapter adapter = (TodoAdapter) mListView.getAdapter();
         adapter.clear();
@@ -144,6 +187,6 @@ public class DayActivity extends AppCompatActivity implements Callback<List<Todo
         Log.d("MyApp", t.getLocalizedMessage());
         t.printStackTrace();
 
-        Toast.makeText(DayActivity.this, t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(DayActivity.this, t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
     }
 }
