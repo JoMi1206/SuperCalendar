@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -13,9 +12,12 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import net.danlew.android.joda.JodaTimeAndroid;
+
+import org.joda.time.DateTimeComparator;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -41,11 +43,14 @@ public class DayActivity extends AppCompatActivity implements Callback<List<Todo
     private final int ADD_TASK_REQUEST = 1;
     private final int UPDATE_TASK_REQUEST = 2;
 
-    private List<TodoItem> todoItemList = new ArrayList<>();
+    private List<TodoItem> mTodoItemListAll = new ArrayList<>();
+    private List<TodoItem> mTodoItemListCurrentDay = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        JodaTimeAndroid.init(this);
+
         setContentView(R.layout.activity_day);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -77,9 +82,9 @@ public class DayActivity extends AppCompatActivity implements Callback<List<Todo
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.d("MyApp", "Item clicked: " + todoItemList.get(position));
+                Log.d("MyApp", "Item clicked: " + mTodoItemListCurrentDay.get(position));
 
-                TodoItem selectedTodo = todoItemList.get(position);
+                TodoItem selectedTodo = mTodoItemListCurrentDay.get(position);
 
                 Intent detailIntent = new Intent(context, AddTodoActivity.class);
                 detailIntent.putExtra(AddTodoActivity.PARAM_MODE, false);
@@ -101,7 +106,8 @@ public class DayActivity extends AppCompatActivity implements Callback<List<Todo
 
         TodoAPI todoAPI = retrofit.create(TodoAPI.class);
 
-        Call<List<TodoItem>> call = todoAPI.receiveTodos();
+        Call<List<TodoItem>> call = todoAPI.getTodos();
+        //TODO filter by date
         call.enqueue(this);
     }
 
@@ -157,7 +163,8 @@ public class DayActivity extends AppCompatActivity implements Callback<List<Todo
     public void onFragmentDateSetListener(Date newDate) {
         currentDate = newDate;
         setTitle(sdf.format(currentDate));
-        //TODO reload items
+        // show day specific items
+        filterTodoList();
     }
 
     @Override
@@ -173,10 +180,8 @@ public class DayActivity extends AppCompatActivity implements Callback<List<Todo
     public void onResponse(Call<List<TodoItem>> call, Response<List<TodoItem>> response) {
         Log.d("MyApp", "onResponse called!");
 
-        TodoAdapter adapter = (TodoAdapter) mListView.getAdapter();
-        adapter.clear();
-        todoItemList = response.body();
-        adapter.addAll(todoItemList);
+        mTodoItemListAll = response.body();
+        filterTodoList();
 
         Toast.makeText(DayActivity.this, "Todos loaded", Toast.LENGTH_SHORT).show();
     }
@@ -188,5 +193,25 @@ public class DayActivity extends AppCompatActivity implements Callback<List<Todo
         t.printStackTrace();
 
         Toast.makeText(DayActivity.this, t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+    }
+
+    private void filterTodoList() {
+        TodoAdapter adapter = (TodoAdapter) mListView.getAdapter();
+        adapter.clear();
+        mTodoItemListCurrentDay.clear();
+        //TODO filter List for current day
+
+        DateTimeComparator dtc = DateTimeComparator.getDateOnlyInstance();
+
+        for(TodoItem item: mTodoItemListAll) {
+            Log.d("MyApp", "itemDate " + item.getDate() + " - currentDate " + currentDate);
+            Log.d("MyApp", "Same date: " + (dtc.compare(item.getDate(), currentDate) == 0));
+
+            if(dtc.compare(item.getDate(), currentDate) == 0) {
+                mTodoItemListCurrentDay.add(item);
+            }
+        }
+
+        adapter.addAll(mTodoItemListCurrentDay);
     }
 }

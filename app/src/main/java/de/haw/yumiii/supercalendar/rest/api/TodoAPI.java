@@ -19,7 +19,10 @@ public interface TodoAPI {
     //Call<List<TodoItem>> loadTodos();
 
     @GET("/todos")
-    Call<List<TodoItem>> receiveTodos();
+    Call<List<TodoItem>> getTodos();
+
+    @GET("/todos/{date}")
+    Call<List<TodoItem>> getTodosByDate(@Path("date") String date);
 
     @POST("/todos")
     Call<TodoItem> postTodo(@Body TodoItem item);
