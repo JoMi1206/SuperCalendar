@@ -16,7 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import de.haw.yumiii.supercalendar.rest.api.TodoAPI;
+import de.haw.yumiii.supercalendar.rest.api.RestAPI;
 import de.haw.yumiii.supercalendar.rest.model.TodoItem;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -51,15 +51,17 @@ public class AddTodoActivity extends AppCompatActivity implements Callback<TodoI
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_todo);
 
-
-
         mNameEditText = (EditText) findViewById(R.id.name_edit_text);
         mDescriptionNote = (EditText) findViewById(R.id.description_edit_text);
         mDateButton = (Button) findViewById(R.id.date_button);
         mCompletedCheckBox = (CheckBox) findViewById(R.id.completed_checkbox);
 
         boolean mode_add = this.getIntent().getExtras().getBoolean(PARAM_IS_MODE_ADD);
-
+        if(mode_add) {
+            mode = Mode.ADD;
+        } else {
+            mode = Mode.UPDATE;
+        }
 
         SimpleDateFormat sdf = new SimpleDateFormat(Settings.DATE_FORMAT);
         String date = this.getIntent().getExtras().getString(PARAM_DATE);
@@ -101,34 +103,19 @@ public class AddTodoActivity extends AppCompatActivity implements Callback<TodoI
 
     private void saveItem() {
 
+        String name = mNameEditText.getText().toString();
+        String description = mDescriptionNote.getText().toString();
+        Boolean completed = mCompletedCheckBox.isChecked();
+        TodoItem item = new TodoItem(name, completed, description, dueDate);
+
+        Retrofit retrofit = new Retrofit.Builder().baseUrl(Settings.REST_API_BASEURL).addConverterFactory(GsonConverterFactory.create()).build();
+        RestAPI restAPI = retrofit.create(RestAPI.class);
+
         if(mode == Mode.ADD) {
-            String name = mNameEditText.getText().toString();
-            String description = mDescriptionNote.getText().toString();
-            Boolean completed = mCompletedCheckBox.isChecked();
-
-            TodoItem item = new TodoItem(name, completed, description, dueDate);
-
-            Retrofit retrofit = new Retrofit.Builder().baseUrl(Settings.REST_API_BASEURL).addConverterFactory(GsonConverterFactory.create()).build();
-
-            TodoAPI todoAPI = retrofit.create(TodoAPI.class);
-
-            Call<TodoItem> call = todoAPI.postTodo(item);
-
+            Call<TodoItem> call = restAPI.postTodo(item);
             call.enqueue(this);
         } else {
-
-            String name = mNameEditText.getText().toString();
-            String description = mDescriptionNote.getText().toString();
-            Boolean completed = mCompletedCheckBox.isChecked();
-
-            TodoItem item = new TodoItem(name, completed, description, dueDate);
-
-            Retrofit retrofit = new Retrofit.Builder().baseUrl(Settings.REST_API_BASEURL).addConverterFactory(GsonConverterFactory.create()).build();
-
-            TodoAPI todoAPI = retrofit.create(TodoAPI.class);
-
-            Call<TodoItem> call = todoAPI.putTodo(todoId,item);
-
+            Call<TodoItem> call = restAPI.putTodo(todoId,item);
             call.enqueue(this);
         }
 

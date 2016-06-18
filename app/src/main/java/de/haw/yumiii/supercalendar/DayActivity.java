@@ -2,7 +2,6 @@ package de.haw.yumiii.supercalendar;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
@@ -26,7 +25,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import de.haw.yumiii.supercalendar.rest.api.TodoAPI;
+import de.haw.yumiii.supercalendar.rest.api.RestAPI;
 import de.haw.yumiii.supercalendar.rest.model.TodoItem;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -104,9 +103,9 @@ public class DayActivity extends AppCompatActivity implements Callback<List<Todo
     private void loadTodoItems() {
         Retrofit retrofit = new Retrofit.Builder().baseUrl(Settings.REST_API_BASEURL).addConverterFactory(GsonConverterFactory.create()).build();
 
-        TodoAPI todoAPI = retrofit.create(TodoAPI.class);
+        RestAPI restAPI = retrofit.create(RestAPI.class);
 
-        Call<List<TodoItem>> call = todoAPI.getTodos();
+        Call<List<TodoItem>> call = restAPI.getTodos();
         //TODO filter by date
         call.enqueue(this);
     }
@@ -185,6 +184,14 @@ public class DayActivity extends AppCompatActivity implements Callback<List<Todo
                     Intent intent = new Intent(DayActivity.this, AddTodoActivity.class);
                     intent.putExtra(AddTodoActivity.PARAM_IS_MODE_ADD, true);
                     intent.putExtra(AddTodoActivity.PARAM_DATE, sdf.format(currentDate));
+                    startActivityForResult(intent, ADD_TASK_REQUEST);
+                    return;
+                }
+
+                if(data.getStringExtra(ChooseAddTypeActivity.PARA_TYPE).equals(ChooseAddTypeActivity.ADD_IMAGE)) {
+                    Intent intent = new Intent(DayActivity.this, AddImageActivity.class);
+                    intent.putExtra(AddImageActivity.PARAM_IS_MODE_ADD, true);
+                    intent.putExtra(AddImageActivity.PARAM_DATE, sdf.format(currentDate));
                     startActivityForResult(intent, ADD_TASK_REQUEST);
                     return;
                 }

@@ -25,7 +25,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/add_image_select_image"
-            android:id="@+id/name_text_view" />
+            android:id="@+id/select_image_button" />
 
     </LinearLayout>
 
@@ -74,6 +74,6 @@
         android:id="@+id/add_imageview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_launcher" />
+        android:src="@drawable/placeholder_img" />
 
 </LinearLayout>
