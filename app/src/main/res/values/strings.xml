@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">SuperCalendar</string>
+
+    <string name="cancel">Cancel</string>
+
     <string name="action_reload">Reload Todos</string>
     <string name="action_choose_date">Choose Date</string>
 
@@ -12,5 +15,11 @@
 
     <string name="toast_todo_added">ToDo added</string>
     <string name="toast_todo_updated">ToDo updated</string>
+
+    <string name="choose_add_todo">Add ToDo</string>
+    <string name="choose_add_image">Add Image</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

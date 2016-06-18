@@ -1,21 +1,13 @@
 package de.haw.yumiii.supercalendar;
 
-import android.app.DatePickerDialog;
-import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -34,7 +26,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class AddTodoActivity extends AppCompatActivity implements Callback<TodoItem>, DatePickerFragment.OnFragmentDateSetListener {
 
-    public static final String PARAM_MODE = "mode_add";
+    public static final String PARAM_IS_MODE_ADD = "mode_add";
     public static final String PARAM_ID = "id";
     public static final String PARAM_NAME = "name";
     public static final String PARAM_NOTE = "note";
@@ -66,7 +58,7 @@ public class AddTodoActivity extends AppCompatActivity implements Callback<TodoI
         mDateButton = (Button) findViewById(R.id.date_button);
         mCompletedCheckBox = (CheckBox) findViewById(R.id.completed_checkbox);
 
-        boolean mode_add = this.getIntent().getExtras().getBoolean(PARAM_MODE);
+        boolean mode_add = this.getIntent().getExtras().getBoolean(PARAM_IS_MODE_ADD);
         if(mode_add) {
             mode = Mode.ADD;
 //            mNameEditText.setEnabled(true);

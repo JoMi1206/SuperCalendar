@@ -2,6 +2,7 @@ package de.haw.yumiii.supercalendar;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
@@ -33,7 +34,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class DayActivity extends AppCompatActivity implements Callback<List<TodoItem>>, DatePickerFragment.OnFragmentDateSetListener {
+public class DayActivity extends AppCompatActivity implements Callback<List<TodoItem>>, DatePickerFragment.OnFragmentDateSetListener, ChooseAddTypeFragment.OnAddItemChoosenListener {
 
     private Date currentDate = new Date();
     SimpleDateFormat sdf = new SimpleDateFormat(Settings.DATE_FORMAT);
@@ -42,6 +43,7 @@ public class DayActivity extends AppCompatActivity implements Callback<List<Todo
 
     private final int ADD_TASK_REQUEST = 1;
     private final int UPDATE_TASK_REQUEST = 2;
+    private final int CHOOSE_ADD_TYPE_REQUEST = 3;
 
     private List<TodoItem> mTodoItemListAll = new ArrayList<>();
     private List<TodoItem> mTodoItemListCurrentDay = new ArrayList<>();
@@ -61,11 +63,9 @@ public class DayActivity extends AppCompatActivity implements Callback<List<Todo
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(DayActivity.this, AddTodoActivity.class);
-
-                intent.putExtra(AddTodoActivity.PARAM_MODE, true);
-
-                startActivityForResult(intent, ADD_TASK_REQUEST);
+                Intent intent = new Intent(DayActivity.this, ChooseAddTypeActivity.class);
+                startActivityForResult(intent, CHOOSE_ADD_TYPE_REQUEST);
+                return;
             }
         });
 
@@ -87,7 +87,7 @@ public class DayActivity extends AppCompatActivity implements Callback<List<Todo
                 TodoItem selectedTodo = mTodoItemListCurrentDay.get(position);
 
                 Intent detailIntent = new Intent(context, AddTodoActivity.class);
-                detailIntent.putExtra(AddTodoActivity.PARAM_MODE, false);
+                detailIntent.putExtra(AddTodoActivity.PARAM_IS_MODE_ADD, false);
 
                 detailIntent.putExtra(AddTodoActivity.PARAM_ID, selectedTodo.get_id());
                 detailIntent.putExtra(AddTodoActivity.PARAM_NAME, selectedTodo.getName());
@@ -173,6 +173,21 @@ public class DayActivity extends AppCompatActivity implements Callback<List<Todo
             if (resultCode == RESULT_OK) {
                 loadTodoItems();
             }
+            return;
+        }
+
+        if(requestCode == CHOOSE_ADD_TYPE_REQUEST) {
+            if(resultCode == RESULT_CANCELED) {
+                return;
+            } else if(resultCode == RESULT_OK) {
+
+                if(data.getStringExtra(ChooseAddTypeActivity.PARA_TYPE).equals(ChooseAddTypeActivity.ADD_TODO)) {
+                    Intent intent = new Intent(DayActivity.this, AddTodoActivity.class);
+                    intent.putExtra(AddTodoActivity.PARAM_IS_MODE_ADD, true);
+                    startActivityForResult(intent, ADD_TASK_REQUEST);
+                    return;
+                }
+            }
         }
     }
 
@@ -204,14 +219,16 @@ public class DayActivity extends AppCompatActivity implements Callback<List<Todo
         DateTimeComparator dtc = DateTimeComparator.getDateOnlyInstance();
 
         for(TodoItem item: mTodoItemListAll) {
-            Log.d("MyApp", "itemDate " + item.getDate() + " - currentDate " + currentDate);
-            Log.d("MyApp", "Same date: " + (dtc.compare(item.getDate(), currentDate) == 0));
-
             if(dtc.compare(item.getDate(), currentDate) == 0) {
                 mTodoItemListCurrentDay.add(item);
             }
         }
 
         adapter.addAll(mTodoItemListCurrentDay);
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+        //TODO implement
     }
 }
