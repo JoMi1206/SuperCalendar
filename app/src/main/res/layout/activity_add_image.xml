@@ -8,7 +8,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:orientation="vertical"
-    tools:context="de.haw.yumiii.supercalendar.AddTodoActivity">
+    tools:context="de.haw.yumiii.supercalendar.AddImageActivity">
 
     <Button
         android:layout_width="match_parent"
@@ -21,18 +21,11 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <TextView
-            android:layout_width="wrap_content"
+        <Button
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/add_todo_name"
+            android:text="@string/add_image_select_image"
             android:id="@+id/name_text_view" />
-
-        <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/name_edit_text"
-            android:inputType="text"
-            android:layout_weight="1" />
 
     </LinearLayout>
 
@@ -77,24 +70,10 @@
 
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <ImageView
+        android:id="@+id/add_imageview"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/add_todo_completed"
-            android:id="@+id/completed_text_view" />
-
-        <CheckBox
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/completed_checkbox"
-            android:layout_weight="1" />
-
-    </LinearLayout>
-
+        android:src="@drawable/ic_launcher" />
 
 </LinearLayout>

@@ -59,33 +59,27 @@ public class AddTodoActivity extends AppCompatActivity implements Callback<TodoI
         mCompletedCheckBox = (CheckBox) findViewById(R.id.completed_checkbox);
 
         boolean mode_add = this.getIntent().getExtras().getBoolean(PARAM_IS_MODE_ADD);
-        if(mode_add) {
-            mode = Mode.ADD;
-//            mNameEditText.setEnabled(true);
-//            mDescriptionNote.setEnabled(true);
-        } else {
-            mode = Mode.UPDATE;
-//            mNameEditText.setEnabled(false);
-//            mDescriptionNote.setEnabled(false);
+
+
+        SimpleDateFormat sdf = new SimpleDateFormat(Settings.DATE_FORMAT);
+        String date = this.getIntent().getExtras().getString(PARAM_DATE);
+        if(date != null) {
+            try {
+                dueDate = sdf.parse(date);
+                mDateButton.setText(date);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         }
 
         if(mode == Mode.UPDATE) {
             todoId = this.getIntent().getExtras().getString(PARAM_ID);
             String name = this.getIntent().getExtras().getString(PARAM_NAME);
             String note = this.getIntent().getExtras().getString(PARAM_NOTE);
-            String date = this.getIntent().getExtras().getString(PARAM_DATE);
-            SimpleDateFormat sdf = new SimpleDateFormat(Settings.DATE_FORMAT);
-            try {
-                dueDate = sdf.parse(date);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-
             boolean completed = this.getIntent().getExtras().getBoolean(PARAM_COMPLETED);
 
             mNameEditText.setText(name);
             mDescriptionNote.setText(note);
-            mDateButton.setText(date);
             mCompletedCheckBox.setChecked(completed);
         }
 

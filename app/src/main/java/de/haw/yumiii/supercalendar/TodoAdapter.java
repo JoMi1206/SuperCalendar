@@ -68,11 +68,12 @@ public class TodoAdapter extends BaseAdapter {
         TextView noteTextView = (TextView) rowView.findViewById(R.id.list_item_note);
         CheckBox completedCheckBox = (CheckBox) rowView.findViewById(R.id.list_item_completed);
 
-        TodoItem todo =(TodoItem) getItem(position);
+        TodoItem todo = (TodoItem) getItem(position);
 
         SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
-        nameTextView.setText(todo.getName() + " Fällig: " + sdf.format(todo.getDate()));
-        if(todo.isCompleted()) {
+//        nameTextView.setText(todo.getName() + " Fällig: " + sdf.format(todo.getDate()));
+        nameTextView.setText(todo.getName());
+        if (todo.isCompleted()) {
             nameTextView.setPaintFlags(nameTextView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
         }
 

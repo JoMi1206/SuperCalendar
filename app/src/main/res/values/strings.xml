@@ -6,12 +6,16 @@
     <string name="action_reload">Reload Todos</string>
     <string name="action_choose_date">Choose Date</string>
 
-    <string name="add_name">Name</string>
+    <string name="add_todo_name">Name</string>
+    <string name="add_todo_completed">Completed</string>
+    <string name="add_todo_duedate">Due Date</string>
+
+    <string name="add_image_select_image">Select Image</string>
+    <string name="add_image_date">Date</string>
+
     <string name="add_decription">Description</string>
-    <string name="add_completed">Completed</string>
-    <string name="add_date">Due Date</string>
-    <string name="add_date_hint">Click to enter due date</string>
-    <string name="add_save">Save ToDo</string>
+    <string name="add_date_hint">Click to enter date</string>
+    <string name="add_save">Save</string>
 
     <string name="toast_todo_added">ToDo added</string>
     <string name="toast_todo_updated">ToDo updated</string>

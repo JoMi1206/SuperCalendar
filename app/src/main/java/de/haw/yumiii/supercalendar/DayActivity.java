@@ -34,7 +34,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class DayActivity extends AppCompatActivity implements Callback<List<TodoItem>>, DatePickerFragment.OnFragmentDateSetListener, ChooseAddTypeFragment.OnAddItemChoosenListener {
+public class DayActivity extends AppCompatActivity implements Callback<List<TodoItem>>, DatePickerFragment.OnFragmentDateSetListener {
 
     private Date currentDate = new Date();
     SimpleDateFormat sdf = new SimpleDateFormat(Settings.DATE_FORMAT);
@@ -92,7 +92,7 @@ public class DayActivity extends AppCompatActivity implements Callback<List<Todo
                 detailIntent.putExtra(AddTodoActivity.PARAM_ID, selectedTodo.get_id());
                 detailIntent.putExtra(AddTodoActivity.PARAM_NAME, selectedTodo.getName());
                 detailIntent.putExtra(AddTodoActivity.PARAM_NOTE, selectedTodo.getNote());
-                SimpleDateFormat sdf = new SimpleDateFormat(Settings.DATE_FORMAT);
+
                 detailIntent.putExtra(AddTodoActivity.PARAM_DATE, sdf.format(selectedTodo.getDate()));
                 detailIntent.putExtra(AddTodoActivity.PARAM_COMPLETED, selectedTodo.isCompleted());
 
@@ -184,6 +184,7 @@ public class DayActivity extends AppCompatActivity implements Callback<List<Todo
                 if(data.getStringExtra(ChooseAddTypeActivity.PARA_TYPE).equals(ChooseAddTypeActivity.ADD_TODO)) {
                     Intent intent = new Intent(DayActivity.this, AddTodoActivity.class);
                     intent.putExtra(AddTodoActivity.PARAM_IS_MODE_ADD, true);
+                    intent.putExtra(AddTodoActivity.PARAM_DATE, sdf.format(currentDate));
                     startActivityForResult(intent, ADD_TASK_REQUEST);
                     return;
                 }
@@ -227,8 +228,4 @@ public class DayActivity extends AppCompatActivity implements Callback<List<Todo
         adapter.addAll(mTodoItemListCurrentDay);
     }
 
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-        //TODO implement
-    }
 }

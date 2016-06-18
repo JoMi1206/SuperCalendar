@@ -21,7 +21,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".AddTodoActivity" />
-        <activity android:name=".ChooseAddTypeActivity"></activity>
+        <activity android:name=".ChooseAddTypeActivity" />
+        <activity android:name=".AddImageActivity"></activity>
     </application>
 
 </manifest>
