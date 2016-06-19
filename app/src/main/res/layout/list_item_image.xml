@@ -10,6 +10,7 @@
         android:layout_height="300dp"
         android:id="@+id/list_item_image"
         android:src="@drawable/placeholder_img"
+        android:layout_marginTop="10dp"
         android:layout_gravity="center" />
 
     <TextView
