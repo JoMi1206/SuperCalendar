@@ -12,6 +12,7 @@ import android.provider.MediaStore;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -44,6 +45,7 @@ public class AddImageActivity extends AppCompatActivity implements Callback<Imag
     public static final String PARAM_ID = "id";
     public static final String PARAM_NOTE = "note";
     public static final String PARAM_DATE = "date";
+    public static final String PARAM_DATA = "data";
 
     public static final int REQUEST_CAMERA = 1;
     public static final int SELECT_FILE = 2;
@@ -100,8 +102,12 @@ public class AddImageActivity extends AppCompatActivity implements Callback<Imag
         if(mode == Mode.UPDATE) {
             imageId = this.getIntent().getExtras().getString(PARAM_ID);
             String note = this.getIntent().getExtras().getString(PARAM_NOTE);
-
             mDescriptionNote.setText(note);
+
+            String data = this.getIntent().getExtras().getString(PARAM_DATA);
+            if(data != null) {
+                mImageView.setImageBitmap(ImageItem.getBitmapFromByteArray(Base64.decode(data, Base64.DEFAULT)));
+            }
         }
 
         Button saveButton = (Button) findViewById(R.id.save_button);

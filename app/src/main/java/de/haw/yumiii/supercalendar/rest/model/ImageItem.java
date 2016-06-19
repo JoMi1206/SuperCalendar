@@ -72,7 +72,7 @@ public class ImageItem extends UserItem {
         return byteArray;
     }
 
-    private Bitmap getBitmapFromByteArray(byte[] byteArray) {
+    public static Bitmap getBitmapFromByteArray(byte[] byteArray) {
         Bitmap bmp;
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inMutable = true;

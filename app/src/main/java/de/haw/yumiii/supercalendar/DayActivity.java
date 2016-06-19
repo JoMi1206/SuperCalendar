@@ -42,9 +42,11 @@ public class DayActivity extends AppCompatActivity implements DatePickerFragment
 
     private ListView mListView;
 
-    private final int ADD_TASK_REQUEST = 1;
-    private final int UPDATE_TASK_REQUEST = 2;
-    private final int CHOOSE_ADD_TYPE_REQUEST = 3;
+    private final int ADD_TODO_REQUEST = 1;
+    private final int UPDATE_TODO_REQUEST = 2;
+    private final int ADD_IMAGE_REQUEST = 3;
+    private final int UPDATE_IMAGE_REQUEST = 4;
+    private final int CHOOSE_ADD_TYPE_REQUEST = 5;
 
     private List<TodoItem> mTodoItemListAll = new ArrayList<>();
     private List<ImageItem> mImageItemListAll = new ArrayList<>();
@@ -105,7 +107,20 @@ public class DayActivity extends AppCompatActivity implements DatePickerFragment
                     detailIntent.putExtra(AddTodoActivity.PARAM_DATE, sdf.format(selectedTodo.getDate()));
                     detailIntent.putExtra(AddTodoActivity.PARAM_COMPLETED, selectedTodo.isCompleted());
 
-                    startActivityForResult(detailIntent, UPDATE_TASK_REQUEST);
+                    startActivityForResult(detailIntent, UPDATE_TODO_REQUEST);
+                } else if(mUserItemListCurrentDay.get(position) instanceof ImageItem) {
+                    ImageItem selectedTodo = (ImageItem) mUserItemListCurrentDay.get(position);
+
+                    Intent detailIntent = new Intent(context, AddImageActivity.class);
+                    detailIntent.putExtra(AddImageActivity.PARAM_IS_MODE_ADD, false);
+
+                    detailIntent.putExtra(AddImageActivity.PARAM_ID, selectedTodo.get_id());
+                    detailIntent.putExtra(AddImageActivity.PARAM_NOTE, selectedTodo.getNote());
+                    detailIntent.putExtra(AddImageActivity.PARAM_DATE, sdf.format(selectedTodo.getDate()));
+                    //TODO check how it is possible to get the image to the view (it is too large as String)
+//                    detailIntent.putExtra(AddImageActivity.PARAM_DATA, selectedTodo.getImageData());
+
+                    startActivityForResult(detailIntent, UPDATE_IMAGE_REQUEST);
                 }
             }
         });
@@ -224,9 +239,16 @@ public class DayActivity extends AppCompatActivity implements DatePickerFragment
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == ADD_TASK_REQUEST || requestCode == UPDATE_TASK_REQUEST) {
+        if (requestCode == ADD_TODO_REQUEST || requestCode == UPDATE_TODO_REQUEST) {
             if (resultCode == RESULT_OK) {
                 loadTodoItems();
+            }
+            return;
+        }
+
+        if (requestCode == ADD_IMAGE_REQUEST || requestCode == UPDATE_IMAGE_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                loadImageItems();
             }
             return;
         }
@@ -240,7 +262,7 @@ public class DayActivity extends AppCompatActivity implements DatePickerFragment
                     Intent intent = new Intent(DayActivity.this, AddTodoActivity.class);
                     intent.putExtra(AddTodoActivity.PARAM_IS_MODE_ADD, true);
                     intent.putExtra(AddTodoActivity.PARAM_DATE, sdf.format(currentDate));
-                    startActivityForResult(intent, ADD_TASK_REQUEST);
+                    startActivityForResult(intent, ADD_TODO_REQUEST);
                     return;
                 }
 
@@ -248,7 +270,7 @@ public class DayActivity extends AppCompatActivity implements DatePickerFragment
                     Intent intent = new Intent(DayActivity.this, AddImageActivity.class);
                     intent.putExtra(AddImageActivity.PARAM_IS_MODE_ADD, true);
                     intent.putExtra(AddImageActivity.PARAM_DATE, sdf.format(currentDate));
-                    startActivityForResult(intent, ADD_TASK_REQUEST);
+                    startActivityForResult(intent, ADD_IMAGE_REQUEST);
                     return;
                 }
             }

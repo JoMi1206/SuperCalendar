@@ -99,7 +99,7 @@ public class TodoAdapter extends BaseAdapter {
             noteTextView.setText(imageItem.getNote());
             Bitmap bmp = imageItem.getBitmap();
             imageView.setImageBitmap(bmp);
-            imageView.getLayoutParams().height = getHeightOfBMPInImageView(imageView.getLayoutParams().height, bmp.getHeight(), bmp.getWidth()); // + 20 padding
+            imageView.getLayoutParams().height = getHeightOfBMPInImageView(imageView.getLayoutParams().height, bmp.getHeight(), bmp.getWidth());
             imageView.requestLayout();
 
             return rowView;
@@ -108,6 +108,15 @@ public class TodoAdapter extends BaseAdapter {
         return null;
     }
 
+    /**
+     * Returns the height of the image according to the width of the ImageView.
+     * If imageView.width >= image.width -> return imageHeight
+     * else return imageHeight * (imageView.width/image.width)
+     * @param imageViewWidth
+     * @param imageHeight
+     * @param imageWidth
+     * @return
+     */
     private int getHeightOfBMPInImageView(int imageViewWidth, int imageHeight, int imageWidth) {
         if(imageWidth <= imageViewWidth) {
             return imageHeight;
