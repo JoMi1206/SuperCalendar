@@ -11,11 +11,6 @@ public class TodoItem extends UserItem {
     private String name;
     private boolean completed;
 
-
-    //TODO add to Server
-    // private Date day;
-
-
     public TodoItem() {
         super();
     }

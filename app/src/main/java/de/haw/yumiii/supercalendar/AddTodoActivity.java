@@ -108,7 +108,7 @@ public class AddTodoActivity extends AppCompatActivity implements Callback<TodoI
         Boolean completed = mCompletedCheckBox.isChecked();
         TodoItem item = new TodoItem(name, completed, description, dueDate);
 
-        Retrofit retrofit = new Retrofit.Builder().baseUrl(Settings.REST_API_BASEURL).addConverterFactory(GsonConverterFactory.create()).build();
+        Retrofit retrofit = new Retrofit.Builder().baseUrl(Settings.REST_API_BASEURL_EMULATOR).addConverterFactory(GsonConverterFactory.create()).build();
         RestAPI restAPI = retrofit.create(RestAPI.class);
 
         if(mode == Mode.ADD) {

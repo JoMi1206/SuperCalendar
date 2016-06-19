@@ -26,14 +26,16 @@ import java.util.Date;
 import java.util.List;
 
 import de.haw.yumiii.supercalendar.rest.api.RestAPI;
+import de.haw.yumiii.supercalendar.rest.model.ImageItem;
 import de.haw.yumiii.supercalendar.rest.model.TodoItem;
+import de.haw.yumiii.supercalendar.rest.model.UserItem;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class DayActivity extends AppCompatActivity implements Callback<List<TodoItem>>, DatePickerFragment.OnFragmentDateSetListener {
+public class DayActivity extends AppCompatActivity implements DatePickerFragment.OnFragmentDateSetListener {
 
     private Date currentDate = new Date();
     SimpleDateFormat sdf = new SimpleDateFormat(Settings.DATE_FORMAT);
@@ -45,7 +47,11 @@ public class DayActivity extends AppCompatActivity implements Callback<List<Todo
     private final int CHOOSE_ADD_TYPE_REQUEST = 3;
 
     private List<TodoItem> mTodoItemListAll = new ArrayList<>();
-    private List<TodoItem> mTodoItemListCurrentDay = new ArrayList<>();
+    private List<ImageItem> mImageItemListAll = new ArrayList<>();
+
+    private List<UserItem> mUserItemListCurrentDay = new ArrayList<>();
+
+    private RestAPI restAPI;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,12 +74,15 @@ public class DayActivity extends AppCompatActivity implements Callback<List<Todo
             }
         });
 
-        loadTodoItems();
+        Retrofit retrofit = new Retrofit.Builder().baseUrl(Settings.REST_API_BASEURL_EMULATOR).addConverterFactory(GsonConverterFactory.create()).build();
+        restAPI = retrofit.create(RestAPI.class);
+
+        loadItems();
 
         mListView = (ListView) findViewById(R.id.todo_list_view);
 
         // Custom Adapter to show the items in a nice way
-        TodoAdapter adapter = new TodoAdapter(this, new ArrayList<TodoItem>());
+        TodoAdapter adapter = new TodoAdapter(this, new ArrayList<UserItem>());
         mListView.setAdapter(adapter);
 
         // Open the edit Activity to edit the selected Item
@@ -81,33 +90,80 @@ public class DayActivity extends AppCompatActivity implements Callback<List<Todo
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.d("MyApp", "Item clicked: " + mTodoItemListCurrentDay.get(position));
+                Log.d("MyApp", "Item clicked: " + mUserItemListCurrentDay.get(position));
 
-                TodoItem selectedTodo = mTodoItemListCurrentDay.get(position);
+                if(mUserItemListCurrentDay.get(position) instanceof TodoItem) {
+                    TodoItem selectedTodo = (TodoItem) mUserItemListCurrentDay.get(position);
 
-                Intent detailIntent = new Intent(context, AddTodoActivity.class);
-                detailIntent.putExtra(AddTodoActivity.PARAM_IS_MODE_ADD, false);
+                    Intent detailIntent = new Intent(context, AddTodoActivity.class);
+                    detailIntent.putExtra(AddTodoActivity.PARAM_IS_MODE_ADD, false);
 
-                detailIntent.putExtra(AddTodoActivity.PARAM_ID, selectedTodo.get_id());
-                detailIntent.putExtra(AddTodoActivity.PARAM_NAME, selectedTodo.getName());
-                detailIntent.putExtra(AddTodoActivity.PARAM_NOTE, selectedTodo.getNote());
+                    detailIntent.putExtra(AddTodoActivity.PARAM_ID, selectedTodo.get_id());
+                    detailIntent.putExtra(AddTodoActivity.PARAM_NAME, selectedTodo.getName());
+                    detailIntent.putExtra(AddTodoActivity.PARAM_NOTE, selectedTodo.getNote());
 
-                detailIntent.putExtra(AddTodoActivity.PARAM_DATE, sdf.format(selectedTodo.getDate()));
-                detailIntent.putExtra(AddTodoActivity.PARAM_COMPLETED, selectedTodo.isCompleted());
+                    detailIntent.putExtra(AddTodoActivity.PARAM_DATE, sdf.format(selectedTodo.getDate()));
+                    detailIntent.putExtra(AddTodoActivity.PARAM_COMPLETED, selectedTodo.isCompleted());
 
-                startActivityForResult(detailIntent, UPDATE_TASK_REQUEST);
+                    startActivityForResult(detailIntent, UPDATE_TASK_REQUEST);
+                }
             }
         });
     }
 
+    private void loadItems() {
+        loadTodoItems();
+        loadImageItems();
+    }
+
+    /**
+     * Loads all To-Do-Items from the server and filters for the selected day.
+     */
     private void loadTodoItems() {
-        Retrofit retrofit = new Retrofit.Builder().baseUrl(Settings.REST_API_BASEURL).addConverterFactory(GsonConverterFactory.create()).build();
-
-        RestAPI restAPI = retrofit.create(RestAPI.class);
-
         Call<List<TodoItem>> call = restAPI.getTodos();
-        //TODO filter by date
-        call.enqueue(this);
+        call.enqueue(new Callback<List<TodoItem>>() {
+            @Override
+            public void onResponse(Call<List<TodoItem>> call, Response<List<TodoItem>> response) {
+                mTodoItemListAll = response.body();
+                filterDailyList();
+
+                Toast.makeText(DayActivity.this, "Todos loaded", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(Call<List<TodoItem>> call, Throwable t) {
+                Log.d("MyApp", "onFailure called!");
+                Log.d("MyApp", t.getLocalizedMessage());
+                t.printStackTrace();
+
+                Toast.makeText(DayActivity.this, t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    /**
+     * Loads all Image-Items from the server and filters for the selected day.
+     */
+    private void loadImageItems() {
+        Call<List<ImageItem>> call = restAPI.getImages();
+        call.enqueue(new Callback<List<ImageItem>>() {
+            @Override
+            public void onResponse(Call<List<ImageItem>> call, Response<List<ImageItem>> response) {
+                mImageItemListAll = response.body();
+                filterDailyList();
+
+                Toast.makeText(DayActivity.this, "Todos loaded", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(Call<List<ImageItem>> call, Throwable t) {
+                Log.d("MyApp", "onFailure called!");
+                Log.d("MyApp", t.getLocalizedMessage());
+                t.printStackTrace();
+
+                Toast.makeText(DayActivity.this, t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     @Override
@@ -126,7 +182,7 @@ public class DayActivity extends AppCompatActivity implements Callback<List<Todo
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_reload) {
-            loadTodoItems();
+            loadItems();
             return true;
         }
 
@@ -163,7 +219,7 @@ public class DayActivity extends AppCompatActivity implements Callback<List<Todo
         currentDate = newDate;
         setTitle(sdf.format(currentDate));
         // show day specific items
-        filterTodoList();
+        filterDailyList();
     }
 
     @Override
@@ -199,40 +255,27 @@ public class DayActivity extends AppCompatActivity implements Callback<List<Todo
         }
     }
 
-    @Override
-    public void onResponse(Call<List<TodoItem>> call, Response<List<TodoItem>> response) {
-        Log.d("MyApp", "onResponse called!");
 
-        mTodoItemListAll = response.body();
-        filterTodoList();
-
-        Toast.makeText(DayActivity.this, "Todos loaded", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onFailure(Call<List<TodoItem>> call, Throwable t) {
-        Log.d("MyApp", "onFailure called!");
-        Log.d("MyApp", t.getLocalizedMessage());
-        t.printStackTrace();
-
-        Toast.makeText(DayActivity.this, t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-    }
-
-    private void filterTodoList() {
+    private void filterDailyList() {
         TodoAdapter adapter = (TodoAdapter) mListView.getAdapter();
         adapter.clear();
-        mTodoItemListCurrentDay.clear();
-        //TODO filter List for current day
+        mUserItemListCurrentDay.clear();
 
         DateTimeComparator dtc = DateTimeComparator.getDateOnlyInstance();
 
         for(TodoItem item: mTodoItemListAll) {
             if(dtc.compare(item.getDate(), currentDate) == 0) {
-                mTodoItemListCurrentDay.add(item);
+                mUserItemListCurrentDay.add(item);
             }
         }
 
-        adapter.addAll(mTodoItemListCurrentDay);
+        for(ImageItem item: mImageItemListAll) {
+            if(dtc.compare(item.getDate(), currentDate) == 0) {
+                mUserItemListCurrentDay.add(item);
+            }
+        }
+
+        adapter.addAll(mUserItemListCurrentDay);
     }
 
 }
