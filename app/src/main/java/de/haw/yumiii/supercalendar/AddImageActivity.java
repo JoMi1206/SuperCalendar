@@ -43,7 +43,7 @@ public class AddImageActivity extends AppCompatActivity implements Callback<Imag
 
     public static final String PARAM_IS_MODE_ADD = "mode_add";
     public static final String PARAM_ID = "id";
-    public static final String PARAM_NOTE = "note";
+    public static final String PARAM_NOTE = "description";
     public static final String PARAM_DATE = "date";
     public static final String PARAM_DATA = "data";
 

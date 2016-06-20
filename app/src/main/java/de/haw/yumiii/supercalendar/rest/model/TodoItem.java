@@ -1,6 +1,9 @@
 package de.haw.yumiii.supercalendar.rest.model;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import de.haw.yumiii.supercalendar.Settings;
 
 /**
  * Created by Yumiii on 22.05.16.
@@ -21,7 +24,11 @@ public class TodoItem extends UserItem {
         this.completed = completed;
     }
 
-
+    public TodoItem(String id, String name, boolean completed, String note, Date date) {
+        super(id, note, date);
+        this.name = name;
+        this.completed = completed;
+    }
 
     public String getName() {
         return name;
@@ -44,8 +51,11 @@ public class TodoItem extends UserItem {
     @Override
     public String toString() {
         return "TodoItem{" +
-                "name='" + name + '\'' +
+                "name='" + name + '\n' +
+                "description='" + description + '\n' +
+                "date='" + new SimpleDateFormat(Settings.DATE_FORMAT).format(date) + '\n' +
                 ", completed=" + completed +
                 '}';
     }
+
 }

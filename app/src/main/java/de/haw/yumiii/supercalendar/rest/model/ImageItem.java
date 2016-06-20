@@ -3,7 +3,6 @@ package de.haw.yumiii.supercalendar.rest.model;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
-import android.util.Log;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Date;
@@ -23,13 +22,13 @@ public class ImageItem extends UserItem {
     public ImageItem(String imageData, String note, Date date) {
         super(note, date);
         this.imageData = imageData;
-        this.note = note;
+        this.description = note;
     }
 
     public ImageItem(Bitmap bitmap, String note, Date date) {
         super(note, date);
         setBitmap(bitmap);
-        this.note = note;
+        this.description = note;
     }
 
     public String getImageData() {
@@ -43,7 +42,7 @@ public class ImageItem extends UserItem {
     @Override
     public String toString() {
         return "ImageItem{" +
-                "note=" + note +
+                "description=" + description +
                 '}';
     }
 

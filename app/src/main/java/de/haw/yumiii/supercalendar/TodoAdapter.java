@@ -3,7 +3,6 @@ package de.haw.yumiii.supercalendar;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Paint;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -82,7 +81,7 @@ public class TodoAdapter extends BaseAdapter {
                 nameTextView.setPaintFlags(nameTextView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
             }
 
-            noteTextView.setText(todo.getNote());
+            noteTextView.setText(todo.getDescription());
             completedCheckBox.setChecked(todo.isCompleted());
 
             return rowView;
@@ -96,7 +95,7 @@ public class TodoAdapter extends BaseAdapter {
 
             ImageItem imageItem = (ImageItem) getItem(position);
 
-            noteTextView.setText(imageItem.getNote());
+            noteTextView.setText(imageItem.getDescription());
             Bitmap bmp = imageItem.getBitmap();
             imageView.setImageBitmap(bmp);
             imageView.getLayoutParams().height = getHeightOfBMPInImageView(imageView.getLayoutParams().height, bmp.getHeight(), bmp.getWidth());

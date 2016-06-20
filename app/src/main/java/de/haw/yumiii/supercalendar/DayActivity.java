@@ -2,6 +2,7 @@ package de.haw.yumiii.supercalendar;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
@@ -11,9 +12,16 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import net.danlew.android.joda.JodaTimeAndroid;
 
@@ -58,7 +66,8 @@ public class DayActivity extends AppCompatActivity implements DatePickerFragment
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        JodaTimeAndroid.init(this);
+        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+
 
         setContentView(R.layout.activity_day);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -102,7 +111,7 @@ public class DayActivity extends AppCompatActivity implements DatePickerFragment
 
                     detailIntent.putExtra(AddTodoActivity.PARAM_ID, selectedTodo.get_id());
                     detailIntent.putExtra(AddTodoActivity.PARAM_NAME, selectedTodo.getName());
-                    detailIntent.putExtra(AddTodoActivity.PARAM_NOTE, selectedTodo.getNote());
+                    detailIntent.putExtra(AddTodoActivity.PARAM_DESCRIPTION, selectedTodo.getDescription());
 
                     detailIntent.putExtra(AddTodoActivity.PARAM_DATE, sdf.format(selectedTodo.getDate()));
                     detailIntent.putExtra(AddTodoActivity.PARAM_COMPLETED, selectedTodo.isCompleted());
@@ -115,7 +124,7 @@ public class DayActivity extends AppCompatActivity implements DatePickerFragment
                     detailIntent.putExtra(AddImageActivity.PARAM_IS_MODE_ADD, false);
 
                     detailIntent.putExtra(AddImageActivity.PARAM_ID, selectedTodo.get_id());
-                    detailIntent.putExtra(AddImageActivity.PARAM_NOTE, selectedTodo.getNote());
+                    detailIntent.putExtra(AddImageActivity.PARAM_NOTE, selectedTodo.getDescription());
                     detailIntent.putExtra(AddImageActivity.PARAM_DATE, sdf.format(selectedTodo.getDate()));
                     //TODO check how it is possible to get the image to the view (it is too large as String)
 //                    detailIntent.putExtra(AddImageActivity.PARAM_DATA, selectedTodo.getImageData());
@@ -135,26 +144,32 @@ public class DayActivity extends AppCompatActivity implements DatePickerFragment
      * Loads all To-Do-Items from the server and filters for the selected day.
      */
     private void loadTodoItems() {
-        Call<List<TodoItem>> call = restAPI.getTodos();
-        call.enqueue(new Callback<List<TodoItem>>() {
+        setProgressBarIndeterminateVisibility(true);
+
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Todo");
+        query.whereEqualTo("owner", ParseUser.getCurrentUser());
+
+        query.findInBackground(new FindCallback<ParseObject>() {
             @Override
-            public void onResponse(Call<List<TodoItem>> call, Response<List<TodoItem>> response) {
-                mTodoItemListAll = response.body();
-                filterDailyList();
-
-                Toast.makeText(DayActivity.this, "Todos loaded", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onFailure(Call<List<TodoItem>> call, Throwable t) {
-                Log.d("MyApp", "onFailure called!");
-                Log.d("MyApp", t.getLocalizedMessage());
-                t.printStackTrace();
-
-                Toast.makeText(DayActivity.this, t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+            public void done(List<ParseObject> todoObjects, ParseException e) {
+                if (e == null) {
+                    // If there are results, update the list of posts
+                    // and notify the adapter
+                    mTodoItemListAll.clear();
+                    for (ParseObject todo : todoObjects) {
+                        TodoItem todoItem = new TodoItem(todo.getObjectId(), todo.getString("name"), todo.getBoolean("completed"), todo.getString("description"), todo.getDate("due_date"));
+                        Log.d("MyApp", "Loaded Todo: " + todoItem);
+                        mTodoItemListAll.add(todoItem);
+                    }
+                    filterDailyList();
+                    setProgressBarIndeterminateVisibility(false);
+                } else {
+                    Log.d(getClass().getSimpleName(), "Error: " + e.getMessage());
+                }
             }
         });
     }
+
 
     /**
      * Loads all Image-Items from the server and filters for the selected day.
@@ -204,6 +219,20 @@ public class DayActivity extends AppCompatActivity implements DatePickerFragment
         if (id == R.id.action_choosedate) {
             showDatePickerDialog(findViewById(android.R.id.content));
             return true;
+        }
+
+        if(id == R.id.action_logout) {
+            ParseUser.logOut();
+
+            // FLAG_ACTIVITY_CLEAR_TASK only works on API 11, so if the user
+            // logs out on older devices, we'll just exit.
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                Intent intent = new Intent(DayActivity.this, LoginDispatchActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            } else {
+                finish();
+            }
         }
 
         return super.onOptionsItemSelected(item);

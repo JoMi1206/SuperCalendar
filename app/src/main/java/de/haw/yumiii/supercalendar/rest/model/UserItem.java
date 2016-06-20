@@ -8,14 +8,20 @@ import java.util.Date;
 public class UserItem {
 
     protected String _id;
-    protected String note;
+    protected String description;
     protected Date date;
 
     public UserItem() {
     }
 
-    public UserItem(String note, Date date) {
-        this.note = note;
+    public UserItem(String description, Date date) {
+        this.description = description;
+        this.date = date;
+    }
+
+    public UserItem(String id, String description, Date date) {
+        this._id = id;
+        this.description = description;
         this.date = date;
     }
 
@@ -23,12 +29,12 @@ public class UserItem {
         return _id;
     }
 
-    public String getNote() {
-        return note;
+    public String getDescription() {
+        return description;
     }
 
-    public void setNote(String note) {
-        this.note = note;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Date getDate() {

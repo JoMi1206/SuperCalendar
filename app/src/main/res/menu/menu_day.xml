@@ -15,4 +15,11 @@
         android:icon="@drawable/ic_action_reload"
         android:title="@string/action_reload"
         app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_logout"
+        android:orderInCategory="100"
+        android:icon="@drawable/ic_action_exit"
+        android:title="@string/action_logout"
+        app:showAsAction="ifRoom" />
 </menu>

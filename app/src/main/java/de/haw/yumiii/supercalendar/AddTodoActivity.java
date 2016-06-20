@@ -11,25 +11,28 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.parse.GetCallback;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
+import com.parse.SaveCallback;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import de.haw.yumiii.supercalendar.rest.api.RestAPI;
 import de.haw.yumiii.supercalendar.rest.model.TodoItem;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
-public class AddTodoActivity extends AppCompatActivity implements Callback<TodoItem>, DatePickerFragment.OnFragmentDateSetListener {
+public class AddTodoActivity extends AppCompatActivity implements DatePickerFragment.OnFragmentDateSetListener {
 
     public static final String PARAM_IS_MODE_ADD = "mode_add";
     public static final String PARAM_ID = "id";
     public static final String PARAM_NAME = "name";
-    public static final String PARAM_NOTE = "note";
+    public static final String PARAM_DESCRIPTION = "description";
     public static final String PARAM_DATE = "date";
     public static final String PARAM_COMPLETED = "completed";
 
@@ -56,12 +59,6 @@ public class AddTodoActivity extends AppCompatActivity implements Callback<TodoI
         mDateButton = (Button) findViewById(R.id.date_button);
         mCompletedCheckBox = (CheckBox) findViewById(R.id.completed_checkbox);
 
-        boolean mode_add = this.getIntent().getExtras().getBoolean(PARAM_IS_MODE_ADD);
-        if(mode_add) {
-            mode = Mode.ADD;
-        } else {
-            mode = Mode.UPDATE;
-        }
 
         SimpleDateFormat sdf = new SimpleDateFormat(Settings.DATE_FORMAT);
         String date = this.getIntent().getExtras().getString(PARAM_DATE);
@@ -74,10 +71,15 @@ public class AddTodoActivity extends AppCompatActivity implements Callback<TodoI
             }
         }
 
-        if(mode == Mode.UPDATE) {
+        boolean mode_add = this.getIntent().getExtras().getBoolean(PARAM_IS_MODE_ADD);
+        if(mode_add) {
+            mode = Mode.ADD;
+        } else {
+            mode = Mode.UPDATE;
+
             todoId = this.getIntent().getExtras().getString(PARAM_ID);
             String name = this.getIntent().getExtras().getString(PARAM_NAME);
-            String note = this.getIntent().getExtras().getString(PARAM_NOTE);
+            String note = this.getIntent().getExtras().getString(PARAM_DESCRIPTION);
             boolean completed = this.getIntent().getExtras().getBoolean(PARAM_COMPLETED);
 
             mNameEditText.setText(name);
@@ -103,41 +105,86 @@ public class AddTodoActivity extends AppCompatActivity implements Callback<TodoI
 
     private void saveItem() {
 
-        String name = mNameEditText.getText().toString();
-        String description = mDescriptionNote.getText().toString();
-        Boolean completed = mCompletedCheckBox.isChecked();
-        TodoItem item = new TodoItem(name, completed, description, dueDate);
-
-        Retrofit retrofit = new Retrofit.Builder().baseUrl(Settings.REST_API_BASEURL_EMULATOR).addConverterFactory(GsonConverterFactory.create()).build();
-        RestAPI restAPI = retrofit.create(RestAPI.class);
+        final String name = mNameEditText.getText().toString();
+        final String description = mDescriptionNote.getText().toString();
+        final Boolean completed = mCompletedCheckBox.isChecked();
 
         if(mode == Mode.ADD) {
-            Call<TodoItem> call = restAPI.postTodo(item);
-            call.enqueue(this);
+            addTodo(name, description, completed);
         } else {
-            Call<TodoItem> call = restAPI.putTodo(todoId,item);
-            call.enqueue(this);
+            updateTodo(name, description, completed);
         }
-
     }
 
-    @Override
-    public void onResponse(Call<TodoItem> call, Response<TodoItem> response) {
-        if(mode == Mode.ADD) {
-            Toast.makeText(AddTodoActivity.this, R.string.toast_todo_added, Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(AddTodoActivity.this, R.string.toast_todo_updated, Toast.LENGTH_SHORT).show();
-        }
+    private void addTodo(String name, String description, Boolean completed) {
+        // With Parse
+        final ParseObject newTodo = new ParseObject("Todo");
 
-        Intent result = new Intent();
-        setResult(RESULT_OK, result);
+        newTodo.put("name", name);
+        newTodo.put("description", description);
+        newTodo.put("completed", completed);
+        newTodo.put("due_date", dueDate);
+        newTodo.put("owner", ParseUser.getCurrentUser());
+        newTodo.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(com.parse.ParseException e) {
 
-        finish();
+                if (e == null) {
+                    if (mode == Mode.ADD) {
+                        Toast.makeText(AddTodoActivity.this, R.string.toast_todo_added, Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(AddTodoActivity.this, R.string.toast_todo_updated, Toast.LENGTH_SHORT).show();
+                    }
+
+                    Intent result = new Intent();
+                    setResult(RESULT_OK, result);
+
+                    finish();
+                } else {
+                    // The save failed.
+                    Toast.makeText(getApplicationContext(), "Failed to Save", Toast.LENGTH_SHORT).show();
+                    Log.d("MyApp", "User update error: " + e);
+                }
+            }
+        });
     }
 
-    @Override
-    public void onFailure(Call<TodoItem> call, Throwable t) {
-        Toast.makeText(AddTodoActivity.this, t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+    private void updateTodo(final String name, final String description, final Boolean completed) {
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Todo");
+
+        // Retrieve the object by id
+        query.getInBackground(todoId, new GetCallback<ParseObject>() {
+            @Override
+            public void done(ParseObject todo, com.parse.ParseException e) {
+                if (e == null) {
+                    // Now let's update it with some new data.
+                    todo.put("name", name);
+                    todo.put("description", description);
+                    todo.put("completed", completed);
+                    todo.put("due_date", dueDate);
+                    todo.saveInBackground(new SaveCallback() {
+                        @Override
+                        public void done(com.parse.ParseException e) {
+                            if (e == null) {
+                                // Saved successfully.
+                                Toast.makeText(getApplicationContext(), "Saved", Toast.LENGTH_SHORT).show();
+                                Intent result = new Intent();
+                                setResult(RESULT_OK, result);
+
+                                finish();
+                            } else {
+                                // The save failed.
+                                Toast.makeText(getApplicationContext(), "Failed to Save", Toast.LENGTH_SHORT).show();
+                                Log.d("MyApp", "User update error: " + e);
+                            }
+                        }
+                    });
+                } else {
+                    Toast.makeText(getApplicationContext(), "Failed to find the current Todo-Item", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+        });
     }
 
     private void showDatePickerDialog(View v) {
