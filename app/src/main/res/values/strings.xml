@@ -18,6 +18,10 @@
 
     <string name="add_image_select_image">Select Image</string>
     <string name="add_image_date">Date</string>
+    <string name="add_image_image_missing">No image selected</string>
+
+    <string name="progress_title">Saving item</string>
+    <string name="progress_message">Please wait while saving item...</string>
 
     <string name="add_decription">Description</string>
     <string name="add_date_hint">Click to enter date</string>
@@ -25,6 +29,11 @@
 
     <string name="toast_todo_added">ToDo added</string>
     <string name="toast_todo_updated">ToDo updated</string>
+
+    <string name="toast_image_added">Image added</string>
+    <string name="toast_image_updated">Image updated</string>
+
+    <string name="toast_save_failed">Failed to save item.</string>
 
     <string name="choose_add_todo">Add ToDo</string>
     <string name="choose_add_image">Add Image</string>

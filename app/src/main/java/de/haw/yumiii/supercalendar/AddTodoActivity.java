@@ -170,7 +170,6 @@ public class AddTodoActivity extends AppCompatActivity implements DatePickerFrag
                                 Toast.makeText(getApplicationContext(), "Saved", Toast.LENGTH_SHORT).show();
                                 Intent result = new Intent();
                                 setResult(RESULT_OK, result);
-
                                 finish();
                             } else {
                                 // The save failed.
@@ -187,8 +186,12 @@ public class AddTodoActivity extends AppCompatActivity implements DatePickerFrag
         });
     }
 
+    /**
+     * Displays a datepicker iwth the current selected due date.
+     * @param v
+     */
     private void showDatePickerDialog(View v) {
-        DialogFragment newFragment = new DatePickerFragment();
+        DialogFragment datePickerFragment = new DatePickerFragment();
         Bundle args = new Bundle();
 
         Calendar cal = Calendar.getInstance();
@@ -205,8 +208,8 @@ public class AddTodoActivity extends AppCompatActivity implements DatePickerFrag
         args.putInt(DatePickerFragment.ARG_MONTH, month);
         args.putInt(DatePickerFragment.ARG_DAY, day);
 
-        newFragment.setArguments(args);
-        newFragment.show(getSupportFragmentManager(), "datePicker");
+        datePickerFragment.setArguments(args);
+        datePickerFragment.show(getSupportFragmentManager(), "datePicker");
     }
 
     public void onFragmentDateSetListener(Date newDate) {

@@ -33,15 +33,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import de.haw.yumiii.supercalendar.rest.api.RestAPI;
 import de.haw.yumiii.supercalendar.rest.model.ImageItem;
 import de.haw.yumiii.supercalendar.rest.model.TodoItem;
 import de.haw.yumiii.supercalendar.rest.model.UserItem;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class DayActivity extends AppCompatActivity implements DatePickerFragment.OnFragmentDateSetListener {
 
@@ -60,8 +54,6 @@ public class DayActivity extends AppCompatActivity implements DatePickerFragment
     private List<ImageItem> mImageItemListAll = new ArrayList<>();
 
     private List<UserItem> mUserItemListCurrentDay = new ArrayList<>();
-
-    private RestAPI restAPI;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,9 +76,6 @@ public class DayActivity extends AppCompatActivity implements DatePickerFragment
                 return;
             }
         });
-
-        Retrofit retrofit = new Retrofit.Builder().baseUrl(Settings.REST_API_BASEURL_EMULATOR).addConverterFactory(GsonConverterFactory.create()).build();
-        restAPI = retrofit.create(RestAPI.class);
 
         loadItems();
 
@@ -175,25 +164,26 @@ public class DayActivity extends AppCompatActivity implements DatePickerFragment
      * Loads all Image-Items from the server and filters for the selected day.
      */
     private void loadImageItems() {
-        Call<List<ImageItem>> call = restAPI.getImages();
-        call.enqueue(new Callback<List<ImageItem>>() {
-            @Override
-            public void onResponse(Call<List<ImageItem>> call, Response<List<ImageItem>> response) {
-                mImageItemListAll = response.body();
-                filterDailyList();
-
-                Toast.makeText(DayActivity.this, "Todos loaded", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onFailure(Call<List<ImageItem>> call, Throwable t) {
-                Log.d("MyApp", "onFailure called!");
-                Log.d("MyApp", t.getLocalizedMessage());
-                t.printStackTrace();
-
-                Toast.makeText(DayActivity.this, t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-            }
-        });
+        //TODO change to Parse
+//        Call<List<ImageItem>> call = restAPI.getImages();
+//        call.enqueue(new Callback<List<ImageItem>>() {
+//            @Override
+//            public void onResponse(Call<List<ImageItem>> call, Response<List<ImageItem>> response) {
+//                mImageItemListAll = response.body();
+//                filterDailyList();
+//
+//                Toast.makeText(DayActivity.this, "Todos loaded", Toast.LENGTH_SHORT).show();
+//            }
+//
+//            @Override
+//            public void onFailure(Call<List<ImageItem>> call, Throwable t) {
+//                Log.d("MyApp", "onFailure called!");
+//                Log.d("MyApp", t.getLocalizedMessage());
+//                t.printStackTrace();
+//
+//                Toast.makeText(DayActivity.this, t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+//            }
+//        });
     }
 
     @Override
