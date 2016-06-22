@@ -1,5 +1,6 @@
 package de.haw.yumiii.supercalendar;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -55,15 +56,20 @@ public class DayActivity extends AppCompatActivity implements DatePickerFragment
 
     private List<UserItem> mUserItemListCurrentDay = new ArrayList<>();
 
+    private ProgressDialog mProgressDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
-
         setContentView(R.layout.activity_day);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        mProgressDialog = new ProgressDialog(this);
+        mProgressDialog.setCancelable(false);
+        mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 
         setTitle(sdf.format(currentDate));
 
@@ -125,6 +131,11 @@ public class DayActivity extends AppCompatActivity implements DatePickerFragment
     }
 
     private void loadItems() {
+        // show a progress dialog
+        mProgressDialog.setTitle(R.string.progress_title_loading);
+        mProgressDialog.setMessage(getApplicationContext().getResources().getString(R.string.progress_message_loading));
+        mProgressDialog.show();
+
         loadTodoItems();
         loadImageItems();
     }
@@ -142,12 +153,11 @@ public class DayActivity extends AppCompatActivity implements DatePickerFragment
             @Override
             public void done(List<ParseObject> todoObjects, ParseException e) {
                 if (e == null) {
-                    // If there are results, update the list of posts
-                    // and notify the adapter
+                    mProgressDialog.dismiss();
+                    // If there are results, update the list of todos
                     mTodoItemListAll.clear();
                     for (ParseObject todo : todoObjects) {
                         TodoItem todoItem = new TodoItem(todo.getObjectId(), todo.getString("name"), todo.getBoolean("completed"), todo.getString("description"), todo.getDate("due_date"));
-                        Log.d("MyApp", "Loaded Todo: " + todoItem);
                         mTodoItemListAll.add(todoItem);
                     }
                     filterDailyList();
@@ -165,6 +175,27 @@ public class DayActivity extends AppCompatActivity implements DatePickerFragment
      */
     private void loadImageItems() {
         //TODO change to Parse
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Image");
+        query.whereEqualTo("owner", ParseUser.getCurrentUser());
+
+        query.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> imageObject, ParseException e) {
+                mProgressDialog.dismiss();
+                if (e == null) {
+                    // If there are results, update the list of images
+                    mImageItemListAll.clear();
+                    for (ParseObject image : imageObject) {
+                        ImageItem imageItem = new ImageItem(image.getObjectId(), image.getParseFile("image"), image.getString("description"), image.getDate("date"));
+                        mImageItemListAll.add(imageItem);
+                    }
+                    filterDailyList();
+                } else {
+                    Log.d(getClass().getSimpleName(), "Error: " + e.getMessage());
+                }
+            }
+        });
+
 //        Call<List<ImageItem>> call = restAPI.getImages();
 //        call.enqueue(new Callback<List<ImageItem>>() {
 //            @Override

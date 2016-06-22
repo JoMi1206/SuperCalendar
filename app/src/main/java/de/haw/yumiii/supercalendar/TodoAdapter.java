@@ -3,13 +3,20 @@ package de.haw.yumiii.supercalendar;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
-import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.parse.GetDataCallback;
+import com.parse.ParseException;
+import com.parse.ParseFile;
+import com.parse.ParseImageView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -27,6 +34,8 @@ public class TodoAdapter extends BaseAdapter {
     private Context mContext;
     private LayoutInflater mInflater;
     private ArrayList<UserItem> mDataSource;
+
+    ParseImageView mImageView;
 
     public TodoAdapter(Context context, ArrayList<UserItem> items) {
         mContext = context;
@@ -91,15 +100,22 @@ public class TodoAdapter extends BaseAdapter {
             View rowView = mInflater.inflate(R.layout.list_item_image, parent, false);
 
             TextView noteTextView = (TextView) rowView.findViewById(R.id.list_item_image_note);
-            ImageView imageView = (ImageView) rowView.findViewById(R.id.list_item_image);
+            mImageView = (ParseImageView) rowView.findViewById(R.id.list_item_image);
 
             ImageItem imageItem = (ImageItem) getItem(position);
 
             noteTextView.setText(imageItem.getDescription());
-            Bitmap bmp = imageItem.getBitmap();
-            imageView.setImageBitmap(bmp);
-            imageView.getLayoutParams().height = getHeightOfBMPInImageView(imageView.getLayoutParams().height, bmp.getHeight(), bmp.getWidth());
-            imageView.requestLayout();
+            ParseFile imageFile = imageItem.getImageFile();
+            if(imageFile != null) {
+                mImageView.setParseFile(imageFile);
+                mImageView.loadInBackground(new GetDataCallback() {
+                    @Override
+                    public void done(byte[] data, ParseException e) {
+                        mImageView.getLayoutParams().height = getHeightOfBMPInImageView(mImageView);
+                        mImageView.requestLayout();
+                    }
+                });
+            }
 
             return rowView;
         }
@@ -111,17 +127,29 @@ public class TodoAdapter extends BaseAdapter {
      * Returns the height of the image according to the width of the ImageView.
      * If imageView.width >= image.width -> return imageHeight
      * else return imageHeight * (imageView.width/image.width)
-     * @param imageViewWidth
-     * @param imageHeight
-     * @param imageWidth
+     * @param imageView
      * @return
      */
-    private int getHeightOfBMPInImageView(int imageViewWidth, int imageHeight, int imageWidth) {
+    private int getHeightOfBMPInImageView(ParseImageView imageView) {
+
+        if(imageView.getDrawable() == null) {
+            return imageView.getHeight();
+        }
+
+        int imageViewWidth = imageView.getWidth();
+
+        Rect bounds = imageView.getDrawable().getBounds();
+        int imageWidth = bounds.width();
+        int imageHeight = bounds.height();
+
+        Log.d("MyApp", "ImageViewWidth = " + imageViewWidth);
+        Log.d("MyApp", "imageHeight = " + imageHeight + " imageWidth = "+ imageWidth);
         if(imageWidth <= imageViewWidth) {
             return imageHeight;
         }
 
         double ratio = ((double)imageViewWidth)/imageWidth;
+        Log.d("MyApp", "ration = " + ratio);
         return (int) (imageHeight * ratio);
     }
 }

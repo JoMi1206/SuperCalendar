@@ -20,8 +20,11 @@
     <string name="add_image_date">Date</string>
     <string name="add_image_image_missing">No image selected</string>
 
-    <string name="progress_title">Saving item</string>
-    <string name="progress_message">Please wait while saving item...</string>
+    <string name="progress_title_loading">Loading</string>
+    <string name="progress_message_loading">Please wait while loading...</string>
+
+    <string name="progress_title_save">Saving item</string>
+    <string name="progress_message_save">Please wait while saving item...</string>
 
     <string name="add_decription">Description</string>
     <string name="add_date_hint">Click to enter date</string>

@@ -15,16 +15,15 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.parse.GetCallback;
 import com.parse.ParseFile;
+import com.parse.ParseImageView;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -62,9 +61,11 @@ public class AddImageActivity extends AppCompatActivity implements DatePickerFra
     private EditText mDescriptionNote;
     private Button mDateButton;
     private Button mChooseImageButton;
-    private ImageView mImageView;
+    private ParseImageView mImageView;
 
     private Button mSaveButton;
+
+    private ImageItem mImageItemToUpdate;
 
     private Date mDate = null;
     SimpleDateFormat sdf = new SimpleDateFormat(Settings.DATE_FORMAT);
@@ -76,9 +77,9 @@ public class AddImageActivity extends AppCompatActivity implements DatePickerFra
     private String imageId = "-1";
     private byte[] mImageBytes;
 
-    public enum Mode {ADD, UPDATE}
+    public enum Mode {ADD, UPDATE};
 
-    ;
+    private ProgressDialog mProgressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,10 +90,14 @@ public class AddImageActivity extends AppCompatActivity implements DatePickerFra
 
         mDescriptionNote = (EditText) findViewById(R.id.description_edit_text);
         mDateButton = (Button) findViewById(R.id.date_button);
-        mImageView = (ImageView) findViewById(R.id.add_imageview);
+        mImageView = (ParseImageView) findViewById(R.id.add_imageview);
         mChooseImageButton = (Button) findViewById(R.id.select_image_button);
 
         mSaveButton = (Button) findViewById(R.id.save_button);
+
+        mProgressDialog = new ProgressDialog(this);
+        mProgressDialog.setCancelable(false);
+        mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 
         boolean mode_add = this.getIntent().getExtras().getBoolean(PARAM_IS_MODE_ADD);
         if (mode_add) {
@@ -117,10 +122,30 @@ public class AddImageActivity extends AppCompatActivity implements DatePickerFra
             String note = this.getIntent().getExtras().getString(PARAM_NOTE);
             mDescriptionNote.setText(note);
 
-            String data = this.getIntent().getExtras().getString(PARAM_DATA);
-            if (data != null) {
-                mImageView.setImageBitmap(ImageItem.getBitmapFromByteArray(Base64.decode(data, Base64.DEFAULT)));
-            }
+            // show a progress dialog
+            mProgressDialog.setTitle(R.string.progress_title_save);
+            mProgressDialog.setMessage(getApplicationContext().getResources().getString(R.string.progress_message_save));
+            mProgressDialog.show();
+
+            ParseQuery<ParseObject> query = ParseQuery.getQuery("Image");
+
+            // Retrieve the object by id
+            query.getInBackground(imageId, new GetCallback<ParseObject>() {
+                @Override
+                public void done(ParseObject imageobject, com.parse.ParseException e) {
+                    mProgressDialog.dismiss();
+
+                    if (e == null) {
+                        //TODO load imageFile and show
+                        mImageItemToUpdate = new ImageItem(imageobject.getObjectId(), imageobject.getParseFile("image"), imageobject.getString("description"), imageobject.getDate("date"));
+                        mImageFile = mImageItemToUpdate.getImageFile();
+                        if(mImageFile != null) {
+                            mImageView.setParseFile(mImageFile);
+                            mImageView.loadInBackground(null);
+                        }
+                    }
+                }
+            });
         }
 
         Button saveButton = (Button) findViewById(R.id.save_button);
@@ -172,19 +197,12 @@ public class AddImageActivity extends AppCompatActivity implements DatePickerFra
         }
 
         // show a progress dialog
-        final ProgressDialog progress = new ProgressDialog(this);
-        progress.setTitle(R.string.progress_title);
-        progress.setMessage(getApplicationContext().getResources().getString(R.string.progress_message));
-        progress.setCancelable(false);
-        progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        progress.show();
-
-//        mProgressBar.setVisibility(View.VISIBLE);
-//        mSaveButton.setEnabled(false);
-
+        mProgressDialog.setTitle(R.string.progress_title_save);
+        mProgressDialog.setMessage(getApplicationContext().getResources().getString(R.string.progress_message_save));
+        mProgressDialog.show();
 
         // Save image as file and append it to imageItem
-        String fileName = "image_" + (new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date()));
+        String fileName = "image_" + (new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date())) + ".jpg";
         mImageFile = new ParseFile(fileName, mImageBytes);
 
         mImageFile.saveInBackground(new SaveCallback() {
@@ -198,13 +216,11 @@ public class AddImageActivity extends AppCompatActivity implements DatePickerFra
                         @Override
                         public void done(com.parse.ParseException e) {
 
-//                            mProgressBar.setVisibility(View.INVISIBLE);
-//                            mSaveButton.setEnabled(true);
-                            progress.dismiss();
+                            mProgressDialog.dismiss();
 
                             if (e == null) {
                                 // after the imageItem is saved it has a ObjectID
-                                Toast.makeText(AddImageActivity.this, R.string.toast_todo_updated, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(AddImageActivity.this, R.string.toast_image_added, Toast.LENGTH_SHORT).show();
 
                                 Intent result = new Intent();
                                 setResult(RESULT_OK, result);
@@ -218,9 +234,7 @@ public class AddImageActivity extends AppCompatActivity implements DatePickerFra
                         }
                     });
                 } else {
-//                    mProgressBar.setVisibility(View.INVISIBLE);
-//                    mSaveButton.setEnabled(true);
-                    progress.dismiss();
+                    mProgressDialog.dismiss();
 
                     // The save failed.
                     Toast.makeText(AddImageActivity.this, R.string.toast_save_failed, Toast.LENGTH_SHORT).show();
@@ -233,34 +247,61 @@ public class AddImageActivity extends AppCompatActivity implements DatePickerFra
     }
 
     private void updateImageItem(final String description, final byte[] image) {
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("Image");
 
+        // show a progress dialog
+        mProgressDialog.setTitle(R.string.progress_title_save);
+        mProgressDialog.setMessage(getApplicationContext().getResources().getString(R.string.progress_message_save));
+        mProgressDialog.show();
+
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Image");
         // Retrieve the object by id
         query.getInBackground(imageId, new GetCallback<ParseObject>() {
             @Override
-            public void done(ParseObject image, com.parse.ParseException e) {
+            public void done(final ParseObject image, com.parse.ParseException e) {
                 if (e == null) {
+
+                    // Update imageFile?
+                    if(mImageBytes != null && mImageBytes.length > 0) {
+                        String fileName = "image_" + (new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date())) + ".jpg";
+                        mImageFile = new ParseFile(fileName, mImageBytes);
+                    }
+
                     // Now let's update it with some new data.
                     image.put("description", description);
                     image.put("date", mDate);
 
-                    image.saveInBackground(new SaveCallback() {
+                    mImageFile.saveInBackground(new SaveCallback() {
                         @Override
                         public void done(com.parse.ParseException e) {
-                            if (e == null) {
-                                // Saved successfully.
-                                Toast.makeText(AddImageActivity.this, R.string.toast_todo_updated, Toast.LENGTH_SHORT).show();
-                                Intent result = new Intent();
-                                setResult(RESULT_OK, result);
-                                finish();
+                            if(e == null) {
+                                mProgressDialog.dismiss();
+                                // if the image is stored successfully -> add it to the imageItem and save the imageItem
+                                image.put("image", mImageFile);
+
+                                image.saveInBackground(new SaveCallback() {
+                                    @Override
+                                    public void done(com.parse.ParseException e) {
+                                        if (e == null) {
+                                            // Saved successfully.
+                                            Toast.makeText(AddImageActivity.this, R.string.toast_image_updated, Toast.LENGTH_SHORT).show();
+                                            Intent result = new Intent();
+                                            setResult(RESULT_OK, result);
+                                            finish();
+                                        } else {
+                                            mProgressDialog.dismiss();
+                                            // The save failed.
+                                            Toast.makeText(AddImageActivity.this, R.string.toast_save_failed, Toast.LENGTH_SHORT).show();
+                                            Log.d("MyApp", "Image update error: " + e);
+                                        }
+                                    }
+                                });
                             } else {
-                                // The save failed.
-                                Toast.makeText(AddImageActivity.this, R.string.toast_save_failed, Toast.LENGTH_SHORT).show();
-                                Log.d("MyApp", "Image update error: " + e);
+                                mProgressDialog.dismiss();
                             }
                         }
                     });
                 } else {
+                    mProgressDialog.dismiss();
                     Toast.makeText(getApplicationContext(), "Failed to find the current Image-Item", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -473,7 +514,11 @@ public class AddImageActivity extends AppCompatActivity implements DatePickerFra
         int photoH = bmOptions.outHeight;
 
         // Determine how much to scale down the image
-        int scaleFactor = Math.min(photoW/targetW, photoH/targetH);
+        int scaleFactor = 1;
+
+        if(photoW > 1000) {
+            scaleFactor = Math.min(photoW/targetW, photoH/targetH);
+        }
 
         // Decode the image file into a Bitmap sized to fill the View
         bmOptions.inJustDecodeBounds = false;
