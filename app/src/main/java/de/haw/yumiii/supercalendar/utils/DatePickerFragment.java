@@ -1,4 +1,4 @@
-package de.haw.yumiii.supercalendar;
+package de.haw.yumiii.supercalendar.utils;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;

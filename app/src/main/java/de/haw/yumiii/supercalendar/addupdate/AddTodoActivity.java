@@ -1,4 +1,4 @@
-package de.haw.yumiii.supercalendar;
+package de.haw.yumiii.supercalendar.addupdate;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -22,10 +22,9 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import de.haw.yumiii.supercalendar.rest.model.TodoItem;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import de.haw.yumiii.supercalendar.utils.DatePickerFragment;
+import de.haw.yumiii.supercalendar.R;
+import de.haw.yumiii.supercalendar.utils.Settings;
 
 public class AddTodoActivity extends AppCompatActivity implements DatePickerFragment.OnFragmentDateSetListener {
 

@@ -1,4 +1,4 @@
-package de.haw.yumiii.supercalendar;
+package de.haw.yumiii.supercalendar.dayoverview;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -16,15 +16,12 @@ import android.view.MenuItem;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
-
-import net.danlew.android.joda.JodaTimeAndroid;
 
 import org.joda.time.DateTimeComparator;
 
@@ -34,6 +31,12 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import de.haw.yumiii.supercalendar.addupdate.AddImageActivity;
+import de.haw.yumiii.supercalendar.addupdate.AddTodoActivity;
+import de.haw.yumiii.supercalendar.utils.DatePickerFragment;
+import de.haw.yumiii.supercalendar.LoginDispatchActivity;
+import de.haw.yumiii.supercalendar.R;
+import de.haw.yumiii.supercalendar.utils.Settings;
 import de.haw.yumiii.supercalendar.rest.model.ImageItem;
 import de.haw.yumiii.supercalendar.rest.model.TodoItem;
 import de.haw.yumiii.supercalendar.rest.model.UserItem;

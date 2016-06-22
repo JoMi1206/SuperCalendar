@@ -26,7 +26,7 @@ public class SuperCalendarApplication extends Application {
 
             @Override
             public void onActivityStarted(Activity activity) {
-                
+
             }
 
             @Override

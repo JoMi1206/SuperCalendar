@@ -1,10 +1,12 @@
-package de.haw.yumiii.supercalendar;
+package de.haw.yumiii.supercalendar.dayoverview;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+
+import de.haw.yumiii.supercalendar.R;
 
 public class ChooseAddTypeActivity extends AppCompatActivity {
 

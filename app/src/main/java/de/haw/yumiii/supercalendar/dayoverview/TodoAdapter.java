@@ -1,4 +1,4 @@
-package de.haw.yumiii.supercalendar;
+package de.haw.yumiii.supercalendar.dayoverview;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -22,6 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import de.haw.yumiii.supercalendar.R;
 import de.haw.yumiii.supercalendar.rest.model.ImageItem;
 import de.haw.yumiii.supercalendar.rest.model.TodoItem;
 import de.haw.yumiii.supercalendar.rest.model.UserItem;

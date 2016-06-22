@@ -6,6 +6,8 @@ package de.haw.yumiii.supercalendar;
 
 import com.parse.ui.ParseLoginDispatchActivity;
 
+import de.haw.yumiii.supercalendar.dayoverview.DayActivity;
+
 public class LoginDispatchActivity extends ParseLoginDispatchActivity {
 
     @Override

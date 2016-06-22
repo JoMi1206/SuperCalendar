@@ -3,7 +3,7 @@ package de.haw.yumiii.supercalendar.rest.model;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import de.haw.yumiii.supercalendar.Settings;
+import de.haw.yumiii.supercalendar.utils.Settings;
 
 /**
  * Created by Yumiii on 22.05.16.

@@ -44,19 +44,19 @@
 
 
         <activity
-            android:name=".DayActivity"
+            android:name=".dayoverview.DayActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity
-            android:name=".AddTodoActivity"
+            android:name=".addupdate.AddTodoActivity"
             android:label="@string/title_activity_add_edit_todo">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="de.haw.yumiii.supercalendar.DayActivity" />
+                android:value=".dayoverview.DayActivity" />
         </activity>
-        <activity android:name=".ChooseAddTypeActivity" />
-        <activity android:name=".AddImageActivity"></activity>
+        <activity android:name=".dayoverview.ChooseAddTypeActivity" />
+        <activity android:name=".addupdate.AddImageActivity"></activity>
 
         <meta-data
             android:name="com.parse.APPLICATION_ID"
