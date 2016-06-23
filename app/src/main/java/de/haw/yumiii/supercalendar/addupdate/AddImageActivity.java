@@ -49,7 +49,6 @@ public class AddImageActivity extends AppCompatActivity implements DatePickerFra
     public static final String PARAM_ID = "id";
     public static final String PARAM_NOTE = "description";
     public static final String PARAM_DATE = "date";
-    public static final String PARAM_DATA = "data";
 
     public static final int REQUEST_CAMERA = 1;
     public static final int SELECT_FILE = 2;

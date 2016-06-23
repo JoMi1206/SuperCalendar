@@ -74,7 +74,7 @@ public class TodoAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        // Get view for row item
+        // Get view for a todoItem
         if(getItem(position) instanceof TodoItem) {
             View rowView = mInflater.inflate(R.layout.list_item_todo, parent, false);
 
@@ -97,6 +97,7 @@ public class TodoAdapter extends BaseAdapter {
             return rowView;
         }
 
+        // Get view for a imageItem
         if(getItem(position) instanceof ImageItem) {
             View rowView = mInflater.inflate(R.layout.list_item_image, parent, false);
 
@@ -143,14 +144,11 @@ public class TodoAdapter extends BaseAdapter {
         int imageWidth = bounds.width();
         int imageHeight = bounds.height();
 
-        Log.d("MyApp", "ImageViewWidth = " + imageViewWidth);
-        Log.d("MyApp", "imageHeight = " + imageHeight + " imageWidth = "+ imageWidth);
         if(imageWidth <= imageViewWidth) {
             return imageHeight;
         }
 
         double ratio = ((double)imageViewWidth)/imageWidth;
-        Log.d("MyApp", "ration = " + ratio);
         return (int) (imageHeight * ratio);
     }
 }

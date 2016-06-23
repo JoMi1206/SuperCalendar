@@ -21,6 +21,7 @@ public class SuperCalendarApplication extends Application {
         registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
             @Override
             public void onActivityCreated(Activity a, Bundle savedInstanceState) {
+                // This app only runs in portrait mode
                 a.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
             }
 

@@ -13,7 +13,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
@@ -64,7 +63,6 @@ public class DayActivity extends AppCompatActivity implements DatePickerFragment
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
         setContentView(R.layout.activity_day);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -124,8 +122,6 @@ public class DayActivity extends AppCompatActivity implements DatePickerFragment
                     detailIntent.putExtra(AddImageActivity.PARAM_ID, selectedTodo.get_id());
                     detailIntent.putExtra(AddImageActivity.PARAM_NOTE, selectedTodo.getDescription());
                     detailIntent.putExtra(AddImageActivity.PARAM_DATE, sdf.format(selectedTodo.getDate()));
-                    //TODO check how it is possible to get the image to the view (it is too large as String)
-//                    detailIntent.putExtra(AddImageActivity.PARAM_DATA, selectedTodo.getImageData());
 
                     startActivityForResult(detailIntent, UPDATE_IMAGE_REQUEST);
                 }
@@ -144,7 +140,7 @@ public class DayActivity extends AppCompatActivity implements DatePickerFragment
     }
 
     /**
-     * Loads all To-Do-Items from the server and filters for the selected day.
+     * Loads all To-Do-Items from the server and stores them in <i>mTodoItemListAll</i>.
      */
     private void loadTodoItems() {
         setProgressBarIndeterminateVisibility(true);
@@ -174,10 +170,9 @@ public class DayActivity extends AppCompatActivity implements DatePickerFragment
 
 
     /**
-     * Loads all Image-Items from the server and filters for the selected day.
+     * Loads all Image-Items from the server and stores them in <i>mImageItemListAll</i>.
      */
     private void loadImageItems() {
-        //TODO change to Parse
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Image");
         query.whereEqualTo("owner", ParseUser.getCurrentUser());
 
@@ -198,26 +193,6 @@ public class DayActivity extends AppCompatActivity implements DatePickerFragment
                 }
             }
         });
-
-//        Call<List<ImageItem>> call = restAPI.getImages();
-//        call.enqueue(new Callback<List<ImageItem>>() {
-//            @Override
-//            public void onResponse(Call<List<ImageItem>> call, Response<List<ImageItem>> response) {
-//                mImageItemListAll = response.body();
-//                filterDailyList();
-//
-//                Toast.makeText(DayActivity.this, "Todos loaded", Toast.LENGTH_SHORT).show();
-//            }
-//
-//            @Override
-//            public void onFailure(Call<List<ImageItem>> call, Throwable t) {
-//                Log.d("MyApp", "onFailure called!");
-//                Log.d("MyApp", t.getLocalizedMessage());
-//                t.printStackTrace();
-//
-//                Toast.makeText(DayActivity.this, t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-//            }
-//        });
     }
 
     @Override
@@ -262,6 +237,10 @@ public class DayActivity extends AppCompatActivity implements DatePickerFragment
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Shows the datepickerdialog with which the user can determine the current day.
+     * @param v
+     */
     private void showDatePickerDialog(View v) {
         DialogFragment newFragment = new DatePickerFragment();
         Bundle args = new Bundle();
@@ -331,6 +310,10 @@ public class DayActivity extends AppCompatActivity implements DatePickerFragment
     }
 
 
+    /**
+     * Adds all todoItems and ImageItems which has the same date as the user selected date
+     * to the daily list and adds this list to the adapter.
+     */
     private void filterDailyList() {
         TodoAdapter adapter = (TodoAdapter) mListView.getAdapter();
         adapter.clear();
