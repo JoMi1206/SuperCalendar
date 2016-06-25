@@ -71,7 +71,6 @@ public class AddImageActivity extends AppCompatActivity implements DatePickerFra
 
     private Date mDate = null;
     SimpleDateFormat sdf = new SimpleDateFormat(Settings.DATE_FORMAT);
-    private Bitmap mImage = null;
     ParseFile mImageFile;
 
     private Mode mode = Mode.ADD;
@@ -150,8 +149,7 @@ public class AddImageActivity extends AppCompatActivity implements DatePickerFra
             });
         }
 
-        Button saveButton = (Button) findViewById(R.id.save_button);
-        saveButton.setOnClickListener(new View.OnClickListener() {
+        mSaveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 saveItem();
@@ -382,11 +380,11 @@ public class AddImageActivity extends AppCompatActivity implements DatePickerFra
         );
 
         // Save a file: path for use with ACTION_VIEW intents
-        mCurrentPhotoPath = "file:" + image.getAbsolutePath();
+        mCurrentPhotoPath = image.getAbsolutePath();
         return image;
     }
 
-    Uri mPhotoURI;
+//    Uri mPhotoURI;
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
@@ -400,9 +398,9 @@ public class AddImageActivity extends AppCompatActivity implements DatePickerFra
             }
             // Continue only if the File was successfully created
             if (photoFile != null) {
-                mPhotoURI = FileProvider.getUriForFile(this, "de.haw.yumiii.fileprovider", photoFile);
-                Log.d("MyApp", mPhotoURI.getPath());
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, mPhotoURI);
+                Uri photoURI = FileProvider.getUriForFile(this, "de.haw.yumiii.fileprovider", photoFile);
+                Log.d("MyApp", "photoURI: " + photoURI.getPath());
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 startActivityForResult(takePictureIntent, REQUEST_CAMERA);
             }
         }
@@ -470,66 +468,18 @@ public class AddImageActivity extends AppCompatActivity implements DatePickerFra
         mImageBytes = scaledData;
     }
 
-//    private void onCaptureImageResult(Intent data) {
-//        Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
-//        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-//        thumbnail.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-//
-//        byte[] bytearray = bytes.toByteArray();
-//
-//        setImage(bytearray);
-
-//        File destination = new File(Environment.getExternalStorageDirectory(),
-//                System.currentTimeMillis() + ".jpg");
-//
-//        FileOutputStream fo;
-//        try {
-//            destination.createNewFile();
-//            fo = new FileOutputStream(destination);
-//            fo.write(bytes.toByteArray());
-//            fo.close();
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-
-//        Log.d("MyApp", "thumbnailsize: " + thumbnail.getHeight() + "|" + thumbnail.getWidth());
-//
-//        //TODO get the fullsize image
-//        Bitmap img = BitmapFactory.decodeFile(destination.getPath());
-//
-//        mImageView.setImageBitmap(img);
-//        image = img;
-//    }
-
     private void setImage() {
-        // Get the dimensions of the View
-        int targetW = mImageView.getWidth();
-        int targetH = mImageView.getHeight();
 
-        // Get the dimensions of the bitmap
-        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-        bmOptions.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
-        int photoW = bmOptions.outWidth;
-        int photoH = bmOptions.outHeight;
-
-        // Determine how much to scale down the image
-        int scaleFactor = 1;
-
-        if(photoW > 1000) {
-            scaleFactor = Math.min(photoW/targetW, photoH/targetH);
-        }
-
-        // Decode the image file into a Bitmap sized to fill the View
-        bmOptions.inJustDecodeBounds = false;
-        bmOptions.inSampleSize = scaleFactor;
-
-        Bitmap bitmap = BitmapFactory.decodeFile(mPhotoURI.getPath(), bmOptions);
+        Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath);
         Log.d("MyApp", "Bitmap size: " + bitmap.getWidth() + "|" + bitmap.getHeight());
-        mImageView.setImageBitmap(bitmap);
-        mImage = bitmap;
+        Bitmap imageScaled = Bitmap.createScaledBitmap(bitmap, 1000, 1000 * bitmap.getHeight() / bitmap.getWidth(), false);
+        Log.d("MyApp", "Scaled image size: " + imageScaled.getWidth() + "|" + imageScaled.getHeight());
+        mImageView.setImageBitmap(imageScaled);
+
+        // Save the byte array for storing to the server
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        imageScaled.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        mImageBytes = bytes.toByteArray();
     }
 
 

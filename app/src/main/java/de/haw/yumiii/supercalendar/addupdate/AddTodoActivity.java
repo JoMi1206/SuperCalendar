@@ -1,5 +1,6 @@
 package de.haw.yumiii.supercalendar.addupdate;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -48,10 +49,16 @@ public class AddTodoActivity extends AppCompatActivity implements DatePickerFrag
 
     public enum Mode {ADD, UPDATE};
 
+    private ProgressDialog mProgressDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_todo);
+
+        mProgressDialog = new ProgressDialog(this);
+        mProgressDialog.setCancelable(false);
+        mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 
         mNameEditText = (EditText) findViewById(R.id.name_edit_text);
         mDescriptionNote = (EditText) findViewById(R.id.description_edit_text);
@@ -116,6 +123,12 @@ public class AddTodoActivity extends AppCompatActivity implements DatePickerFrag
     }
 
     private void addTodo(String name, String description, Boolean completed) {
+
+        // show a progress dialog
+        mProgressDialog.setTitle(R.string.progress_title_save);
+        mProgressDialog.setMessage(getApplicationContext().getResources().getString(R.string.progress_message_save));
+        mProgressDialog.show();
+
         // With Parse
         final ParseObject newTodo = new ParseObject("Todo");
 
@@ -127,6 +140,8 @@ public class AddTodoActivity extends AppCompatActivity implements DatePickerFrag
         newTodo.saveInBackground(new SaveCallback() {
             @Override
             public void done(com.parse.ParseException e) {
+
+                mProgressDialog.dismiss();
 
                 if (e == null) {
                     if (mode == Mode.ADD) {
@@ -149,6 +164,11 @@ public class AddTodoActivity extends AppCompatActivity implements DatePickerFrag
     }
 
     private void updateTodo(final String name, final String description, final Boolean completed) {
+        // show a progress dialog
+        mProgressDialog.setTitle(R.string.progress_title_save);
+        mProgressDialog.setMessage(getApplicationContext().getResources().getString(R.string.progress_message_save));
+        mProgressDialog.show();
+
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Todo");
 
         // Retrieve the object by id
@@ -164,6 +184,7 @@ public class AddTodoActivity extends AppCompatActivity implements DatePickerFrag
                     todo.saveInBackground(new SaveCallback() {
                         @Override
                         public void done(com.parse.ParseException e) {
+                            mProgressDialog.dismiss();
                             if (e == null) {
                                 // Saved successfully.
                                 Toast.makeText(getApplicationContext(), "Saved", Toast.LENGTH_SHORT).show();
@@ -178,6 +199,7 @@ public class AddTodoActivity extends AppCompatActivity implements DatePickerFrag
                         }
                     });
                 } else {
+                    mProgressDialog.dismiss();
                     Toast.makeText(getApplicationContext(), "Failed to find the current Todo-Item", Toast.LENGTH_SHORT).show();
                 }
             }

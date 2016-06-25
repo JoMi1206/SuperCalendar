@@ -97,8 +97,7 @@ public class DayActivity extends AppCompatActivity implements DatePickerFragment
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.d("MyApp", "Item clicked: " + mUserItemListCurrentDay.get(position));
-
+                // open TodoItem
                 if(mUserItemListCurrentDay.get(position) instanceof TodoItem) {
                     TodoItem selectedTodo = (TodoItem) mUserItemListCurrentDay.get(position);
 
@@ -114,6 +113,7 @@ public class DayActivity extends AppCompatActivity implements DatePickerFragment
 
                     startActivityForResult(detailIntent, UPDATE_TODO_REQUEST);
                 } else if(mUserItemListCurrentDay.get(position) instanceof ImageItem) {
+                    // open ImageItem
                     ImageItem selectedTodo = (ImageItem) mUserItemListCurrentDay.get(position);
 
                     Intent detailIntent = new Intent(context, AddImageActivity.class);
