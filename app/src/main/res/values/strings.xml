@@ -14,6 +14,12 @@
     <string name="action_choose_date">Choose Date</string>
     <string name="action_logout">Logout</string>
 
+    <string name="dialog_delete_title">Delete item</string>
+    <string name="dialog_delete_positive_button">Delete!</string>
+    <string name="dialog_delete_negative_button">Cancel</string>
+    <string name="dialog_delete_todo">Do you want to delete this ToDo item?</string>
+    <string name="dialog_delete_image">Do you want to delete this image item?</string>
+
     <string name="add_todo_name">Name</string>
     <string name="add_todo_completed">Completed</string>
     <string name="add_todo_duedate">Due Date</string>
@@ -32,6 +38,9 @@
 
     <string name="progress_title_save">Saving item</string>
     <string name="progress_message_save">Please wait while saving item...</string>
+
+    <string name="progress_title_delete">Deleting item</string>
+    <string name="progress_message_delete">Please wait while deleting item...</string>
 
     <string name="add_decription">Description</string>
     <string name="add_date_hint">Click to enter date</string>

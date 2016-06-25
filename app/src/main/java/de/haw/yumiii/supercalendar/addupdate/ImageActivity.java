@@ -43,7 +43,7 @@ import de.haw.yumiii.supercalendar.utils.Settings;
 import de.haw.yumiii.supercalendar.rest.model.ImageItem;
 import de.haw.yumiii.supercalendar.utils.Utility;
 
-public class AddImageActivity extends AppCompatActivity implements DatePickerFragment.OnFragmentDateSetListener {
+public class ImageActivity extends AppCompatActivity implements DatePickerFragment.OnFragmentDateSetListener {
 
     public static final String PARAM_IS_MODE_ADD = "mode_add";
     public static final String PARAM_ID = "id";
@@ -178,12 +178,12 @@ public class AddImageActivity extends AppCompatActivity implements DatePickerFra
 
         // check everything is filled out
         if(description.isEmpty()) {
-            Toast.makeText(AddImageActivity.this, R.string.add_image_description_missing, Toast.LENGTH_SHORT).show();
+            Toast.makeText(ImageActivity.this, R.string.add_image_description_missing, Toast.LENGTH_SHORT).show();
             return;
         }
 
         if(mImageBytes == null && mImageItemToUpdate == null) {
-            Toast.makeText(AddImageActivity.this, R.string.add_image_image_missing, Toast.LENGTH_SHORT).show();
+            Toast.makeText(ImageActivity.this, R.string.add_image_image_missing, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -226,7 +226,7 @@ public class AddImageActivity extends AppCompatActivity implements DatePickerFra
 
                             if (e == null) {
                                 // after the imageItem is saved it has a ObjectID
-                                Toast.makeText(AddImageActivity.this, R.string.toast_image_added, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(ImageActivity.this, R.string.toast_image_added, Toast.LENGTH_SHORT).show();
 
                                 Intent result = new Intent();
                                 setResult(RESULT_OK, result);
@@ -234,7 +234,7 @@ public class AddImageActivity extends AppCompatActivity implements DatePickerFra
                                 finish();
                             } else {
                                 // The save failed.
-                                Toast.makeText(AddImageActivity.this, R.string.toast_save_failed, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(ImageActivity.this, R.string.toast_save_failed, Toast.LENGTH_SHORT).show();
                                 Log.d("MyApp", "Image post error: " + e);
                             }
                         }
@@ -243,7 +243,7 @@ public class AddImageActivity extends AppCompatActivity implements DatePickerFra
                     mProgressDialog.dismiss();
 
                     // The save failed.
-                    Toast.makeText(AddImageActivity.this, R.string.toast_save_failed, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ImageActivity.this, R.string.toast_save_failed, Toast.LENGTH_SHORT).show();
                     Log.d("MyApp", "Image post error: " + e);
                 }
             }
@@ -289,14 +289,14 @@ public class AddImageActivity extends AppCompatActivity implements DatePickerFra
                                     public void done(com.parse.ParseException e) {
                                         if (e == null) {
                                             // Saved successfully.
-                                            Toast.makeText(AddImageActivity.this, R.string.toast_image_updated, Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(ImageActivity.this, R.string.toast_image_updated, Toast.LENGTH_SHORT).show();
                                             Intent result = new Intent();
                                             setResult(RESULT_OK, result);
                                             finish();
                                         } else {
                                             mProgressDialog.dismiss();
                                             // The save failed.
-                                            Toast.makeText(AddImageActivity.this, R.string.toast_save_failed, Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(ImageActivity.this, R.string.toast_save_failed, Toast.LENGTH_SHORT).show();
                                             Log.d("MyApp", "Image update error: " + e);
                                         }
                                     }
@@ -350,20 +350,20 @@ public class AddImageActivity extends AppCompatActivity implements DatePickerFra
         final String cancel_text = getApplicationContext().getResources().getString(R.string.cancel);
         final CharSequence[] items = {cam_text, lib_text, cancel_text};
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(AddImageActivity.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(ImageActivity.this);
         builder.setTitle(R.string.add_image_choose);
         builder.setItems(items, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int item) {
 
                 if (items[item].equals(cam_text)) {
-                    boolean result = Utility.checkPermission(AddImageActivity.this);
+                    boolean result = Utility.checkPermission(ImageActivity.this);
                     mUserChoosenTask = PARAM_CAMERA;
                     if (result)
                         dispatchTakePictureIntent();
 
                 } else if (items[item].equals(lib_text)) {
-                    boolean result = Utility.checkPermission(AddImageActivity.this);
+                    boolean result = Utility.checkPermission(ImageActivity.this);
                     mUserChoosenTask = PARAM_LIBRARY;
                     if (result)
                         galleryIntent();
@@ -436,7 +436,7 @@ public class AddImageActivity extends AppCompatActivity implements DatePickerFra
                     else if (mUserChoosenTask.equals(PARAM_LIBRARY))
                         galleryIntent();
                 } else {
-                    Toast.makeText(AddImageActivity.this, "Permission denied!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(ImageActivity.this, "Permission denied!", Toast.LENGTH_LONG).show();
                 }
                 break;
         }

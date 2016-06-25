@@ -27,7 +27,7 @@ import de.haw.yumiii.supercalendar.utils.DatePickerFragment;
 import de.haw.yumiii.supercalendar.R;
 import de.haw.yumiii.supercalendar.utils.Settings;
 
-public class AddTodoActivity extends AppCompatActivity implements DatePickerFragment.OnFragmentDateSetListener {
+public class TodoActivity extends AppCompatActivity implements DatePickerFragment.OnFragmentDateSetListener {
 
     public static final String PARAM_IS_MODE_ADD = "mode_add";
     public static final String PARAM_ID = "id";
@@ -118,7 +118,7 @@ public class AddTodoActivity extends AppCompatActivity implements DatePickerFrag
         final Boolean completed = mCompletedCheckBox.isChecked();
 
         if(name.isEmpty()) {
-            Toast.makeText(AddTodoActivity.this, R.string.add_todo_name_missing, Toast.LENGTH_SHORT).show();
+            Toast.makeText(TodoActivity.this, R.string.add_todo_name_missing, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -152,9 +152,9 @@ public class AddTodoActivity extends AppCompatActivity implements DatePickerFrag
 
                 if (e == null) {
                     if (mode == Mode.ADD) {
-                        Toast.makeText(AddTodoActivity.this, R.string.toast_todo_added, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(TodoActivity.this, R.string.toast_todo_added, Toast.LENGTH_SHORT).show();
                     } else {
-                        Toast.makeText(AddTodoActivity.this, R.string.toast_todo_updated, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(TodoActivity.this, R.string.toast_todo_updated, Toast.LENGTH_SHORT).show();
                     }
 
                     Intent result = new Intent();

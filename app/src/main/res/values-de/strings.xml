@@ -14,6 +14,12 @@
     <string name="action_choose_date">Datum auswählen</string>
     <string name="action_logout">Logout</string>
 
+    <string name="dialog_delete_title">Element löschen</string>
+    <string name="dialog_delete_positive_button">Löschen!</string>
+    <string name="dialog_delete_negative_button">Abbrechen</string>
+    <string name="dialog_delete_todo">Wollen Sie diese Aufgabe löschen?</string>
+    <string name="dialog_delete_image">Wollen Sie dieses Bild löschen?</string>
+
     <string name="add_todo_name">Name</string>
     <string name="add_todo_completed">Abgeschlossen</string>
     <string name="add_todo_duedate">Fälligkeitsdatum</string>
@@ -32,6 +38,9 @@
 
     <string name="progress_title_save">Element speichern</string>
     <string name="progress_message_save">Bitte warten...</string>
+
+    <string name="progress_title_delete">Element löschen</string>
+    <string name="progress_message_delete">Bitte warten...</string>
 
     <string name="add_decription">Beschreibung</string>
     <string name="add_date_hint">Klicken, um Datum einzugeben</string>

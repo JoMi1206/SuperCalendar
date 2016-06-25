@@ -51,14 +51,14 @@
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity
-            android:name=".addupdate.AddTodoActivity"
+            android:name=".addupdate.TodoActivity"
             android:label="@string/title_activity_add_edit_todo">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".dayoverview.DayActivity" />
         </activity>
         <activity android:name=".dayoverview.ChooseAddTypeActivity" />
-        <activity android:name=".addupdate.AddImageActivity"></activity>
+        <activity android:name=".addupdate.ImageActivity"></activity>
 
         <meta-data
             android:name="com.parse.APPLICATION_ID"

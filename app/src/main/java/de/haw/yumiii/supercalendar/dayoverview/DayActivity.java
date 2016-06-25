@@ -2,11 +2,13 @@ package de.haw.yumiii.supercalendar.dayoverview;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -16,7 +18,9 @@ import android.view.MenuItem;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.parse.DeleteCallback;
 import com.parse.FindCallback;
+import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -30,8 +34,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import de.haw.yumiii.supercalendar.addupdate.AddImageActivity;
-import de.haw.yumiii.supercalendar.addupdate.AddTodoActivity;
+import de.haw.yumiii.supercalendar.addupdate.ImageActivity;
+import de.haw.yumiii.supercalendar.addupdate.TodoActivity;
 import de.haw.yumiii.supercalendar.utils.DatePickerFragment;
 import de.haw.yumiii.supercalendar.LoginDispatchActivity;
 import de.haw.yumiii.supercalendar.R;
@@ -101,30 +105,46 @@ public class DayActivity extends AppCompatActivity implements DatePickerFragment
                 if(mUserItemListCurrentDay.get(position) instanceof TodoItem) {
                     TodoItem selectedTodo = (TodoItem) mUserItemListCurrentDay.get(position);
 
-                    Intent detailIntent = new Intent(context, AddTodoActivity.class);
-                    detailIntent.putExtra(AddTodoActivity.PARAM_IS_MODE_ADD, false);
+                    Intent detailIntent = new Intent(context, TodoActivity.class);
+                    detailIntent.putExtra(TodoActivity.PARAM_IS_MODE_ADD, false);
 
-                    detailIntent.putExtra(AddTodoActivity.PARAM_ID, selectedTodo.get_id());
-                    detailIntent.putExtra(AddTodoActivity.PARAM_NAME, selectedTodo.getName());
-                    detailIntent.putExtra(AddTodoActivity.PARAM_DESCRIPTION, selectedTodo.getDescription());
+                    detailIntent.putExtra(TodoActivity.PARAM_ID, selectedTodo.get_id());
+                    detailIntent.putExtra(TodoActivity.PARAM_NAME, selectedTodo.getName());
+                    detailIntent.putExtra(TodoActivity.PARAM_DESCRIPTION, selectedTodo.getDescription());
 
-                    detailIntent.putExtra(AddTodoActivity.PARAM_DATE, sdf.format(selectedTodo.getDate()));
-                    detailIntent.putExtra(AddTodoActivity.PARAM_COMPLETED, selectedTodo.isCompleted());
+                    detailIntent.putExtra(TodoActivity.PARAM_DATE, sdf.format(selectedTodo.getDate()));
+                    detailIntent.putExtra(TodoActivity.PARAM_COMPLETED, selectedTodo.isCompleted());
 
                     startActivityForResult(detailIntent, UPDATE_TODO_REQUEST);
                 } else if(mUserItemListCurrentDay.get(position) instanceof ImageItem) {
                     // open ImageItem
-                    ImageItem selectedTodo = (ImageItem) mUserItemListCurrentDay.get(position);
+                    ImageItem selectedImage = (ImageItem) mUserItemListCurrentDay.get(position);
 
-                    Intent detailIntent = new Intent(context, AddImageActivity.class);
-                    detailIntent.putExtra(AddImageActivity.PARAM_IS_MODE_ADD, false);
+                    Intent detailIntent = new Intent(context, ImageActivity.class);
+                    detailIntent.putExtra(ImageActivity.PARAM_IS_MODE_ADD, false);
 
-                    detailIntent.putExtra(AddImageActivity.PARAM_ID, selectedTodo.get_id());
-                    detailIntent.putExtra(AddImageActivity.PARAM_NOTE, selectedTodo.getDescription());
-                    detailIntent.putExtra(AddImageActivity.PARAM_DATE, sdf.format(selectedTodo.getDate()));
+                    detailIntent.putExtra(ImageActivity.PARAM_ID, selectedImage.get_id());
+                    detailIntent.putExtra(ImageActivity.PARAM_NOTE, selectedImage.getDescription());
+                    detailIntent.putExtra(ImageActivity.PARAM_DATE, sdf.format(selectedImage.getDate()));
 
                     startActivityForResult(detailIntent, UPDATE_IMAGE_REQUEST);
                 }
+            }
+        });
+
+        mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                // open TodoItem
+                if(mUserItemListCurrentDay.get(position) instanceof TodoItem) {
+                    TodoItem selectedTodo = (TodoItem) mUserItemListCurrentDay.get(position);
+                    removeTodoItem(selectedTodo);
+                } else if(mUserItemListCurrentDay.get(position) instanceof ImageItem) {
+                    // open ImageItem
+                    ImageItem selectedImage = (ImageItem) mUserItemListCurrentDay.get(position);
+                    removeImageItem(selectedImage);
+                }
+                return true;
             }
         });
     }
@@ -291,17 +311,17 @@ public class DayActivity extends AppCompatActivity implements DatePickerFragment
             } else if(resultCode == RESULT_OK) {
 
                 if(data.getStringExtra(ChooseAddTypeActivity.PARA_TYPE).equals(ChooseAddTypeActivity.ADD_TODO)) {
-                    Intent intent = new Intent(DayActivity.this, AddTodoActivity.class);
-                    intent.putExtra(AddTodoActivity.PARAM_IS_MODE_ADD, true);
-                    intent.putExtra(AddTodoActivity.PARAM_DATE, sdf.format(currentDate));
+                    Intent intent = new Intent(DayActivity.this, TodoActivity.class);
+                    intent.putExtra(TodoActivity.PARAM_IS_MODE_ADD, true);
+                    intent.putExtra(TodoActivity.PARAM_DATE, sdf.format(currentDate));
                     startActivityForResult(intent, ADD_TODO_REQUEST);
                     return;
                 }
 
                 if(data.getStringExtra(ChooseAddTypeActivity.PARA_TYPE).equals(ChooseAddTypeActivity.ADD_IMAGE)) {
-                    Intent intent = new Intent(DayActivity.this, AddImageActivity.class);
-                    intent.putExtra(AddImageActivity.PARAM_IS_MODE_ADD, true);
-                    intent.putExtra(AddImageActivity.PARAM_DATE, sdf.format(currentDate));
+                    Intent intent = new Intent(DayActivity.this, ImageActivity.class);
+                    intent.putExtra(ImageActivity.PARAM_IS_MODE_ADD, true);
+                    intent.putExtra(ImageActivity.PARAM_DATE, sdf.format(currentDate));
                     startActivityForResult(intent, ADD_IMAGE_REQUEST);
                     return;
                 }
@@ -334,6 +354,64 @@ public class DayActivity extends AppCompatActivity implements DatePickerFragment
         }
 
         adapter.addAll(mUserItemListCurrentDay);
+    }
+
+    private void removeTodoItem(final TodoItem item) {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setTitle(R.string.dialog_delete_title);
+        alertDialogBuilder.setMessage(R.string.dialog_delete_todo);
+        alertDialogBuilder.setPositiveButton(R.string.dialog_delete_positive_button, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // show a progress dialog
+                mProgressDialog.setTitle(R.string.progress_title_delete);
+                mProgressDialog.setMessage(getApplicationContext().getResources().getString(R.string.progress_message_delete));
+                mProgressDialog.show();
+
+                ParseObject.createWithoutData("Todo", item.get_id()).deleteEventually(new DeleteCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        mProgressDialog.dismiss();
+                        loadItems();
+                    }
+                });
+            }
+        });
+
+        alertDialogBuilder.setNegativeButton(R.string.dialog_delete_negative_button, null);
+        alertDialogBuilder.setCancelable(true);
+
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+    }
+
+    private void removeImageItem(final ImageItem item) {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setTitle(R.string.dialog_delete_title);
+        alertDialogBuilder.setMessage(R.string.dialog_delete_image);
+        alertDialogBuilder.setPositiveButton(R.string.dialog_delete_positive_button, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // show a progress dialog
+                mProgressDialog.setTitle(R.string.progress_title_delete);
+                mProgressDialog.setMessage(getApplicationContext().getResources().getString(R.string.progress_message_delete));
+                mProgressDialog.show();
+
+                ParseObject.createWithoutData("Image", item.get_id()).deleteEventually(new DeleteCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        mProgressDialog.dismiss();
+                        loadItems();
+                    }
+                });
+            }
+        });
+
+        alertDialogBuilder.setNegativeButton(R.string.dialog_delete_negative_button, null);
+        alertDialogBuilder.setCancelable(true);
+
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
     }
 
 }
