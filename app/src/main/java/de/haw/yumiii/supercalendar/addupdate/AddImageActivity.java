@@ -72,6 +72,7 @@ public class AddImageActivity extends AppCompatActivity implements DatePickerFra
     private Date mDate = null;
     SimpleDateFormat sdf = new SimpleDateFormat(Settings.DATE_FORMAT);
     ParseFile mImageFile;
+    String mCurrentPhotoPath;
 
     private Mode mode = Mode.ADD;
 
@@ -176,6 +177,17 @@ public class AddImageActivity extends AppCompatActivity implements DatePickerFra
 
         final String description = mDescriptionNote.getText().toString();
 
+        // check everything is filled out
+        if(description.isEmpty()) {
+            Toast.makeText(AddImageActivity.this, R.string.add_image_description_missing, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if(mImageBytes == null && mImageItemToUpdate == null) {
+            Toast.makeText(AddImageActivity.this, R.string.add_image_image_missing, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         //TODO: adjust null image
         if(mode == Mode.ADD) {
             addImageItem(description, null);
@@ -190,11 +202,6 @@ public class AddImageActivity extends AppCompatActivity implements DatePickerFra
         newImage.put("description", description);
         newImage.put("date", mDate);
         newImage.put("owner", ParseUser.getCurrentUser());
-
-        if(mImageBytes == null) {
-            Toast.makeText(getApplicationContext(), R.string.add_image_image_missing, Toast.LENGTH_SHORT);
-            return;
-        }
 
         // show a progress dialog
         mProgressDialog.setTitle(R.string.progress_title_save);
@@ -367,7 +374,6 @@ public class AddImageActivity extends AppCompatActivity implements DatePickerFra
         builder.show();
     }
 
-    String mCurrentPhotoPath;
     private File createImageFile() throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
@@ -394,7 +400,7 @@ public class AddImageActivity extends AppCompatActivity implements DatePickerFra
             try {
                 photoFile = createImageFile();
             } catch (IOException ex) {
-                Toast.makeText(getApplicationContext(), "Failed to create image File", Toast.LENGTH_SHORT);
+                Toast.makeText(getApplicationContext(), "Failed to create image File", Toast.LENGTH_SHORT).show();
             }
             // Continue only if the File was successfully created
             if (photoFile != null) {
@@ -470,10 +476,13 @@ public class AddImageActivity extends AppCompatActivity implements DatePickerFra
 
     private void setImage() {
 
+        // Get the bitmap from the file which is saved by the camera intent
         Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath);
-        Log.d("MyApp", "Bitmap size: " + bitmap.getWidth() + "|" + bitmap.getHeight());
-        Bitmap imageScaled = Bitmap.createScaledBitmap(bitmap, 1000, 1000 * bitmap.getHeight() / bitmap.getWidth(), false);
-        Log.d("MyApp", "Scaled image size: " + imageScaled.getWidth() + "|" + imageScaled.getHeight());
+        // scale the image if the width is > 1000 px
+        Bitmap imageScaled = bitmap;
+        if(imageScaled.getWidth() > 1000) {
+            imageScaled = Bitmap.createScaledBitmap(bitmap, 1000, 1000 * bitmap.getHeight() / bitmap.getWidth(), false);
+        }
         mImageView.setImageBitmap(imageScaled);
 
         // Save the byte array for storing to the server

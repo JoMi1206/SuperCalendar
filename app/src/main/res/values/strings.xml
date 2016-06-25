@@ -15,10 +15,12 @@
     <string name="add_todo_name">Name</string>
     <string name="add_todo_completed">Completed</string>
     <string name="add_todo_duedate">Due Date</string>
+    <string name="add_todo_name_missing">Please assign a name for the item</string>
 
     <string name="add_image_select_image">Select Image</string>
     <string name="add_image_date">Date</string>
     <string name="add_image_image_missing">No image selected</string>
+    <string name="add_image_description_missing">Please fill out the description</string>
 
     <string name="progress_title_loading">Loading</string>
     <string name="progress_message_loading">Please wait while loading...</string>

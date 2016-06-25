@@ -115,6 +115,11 @@ public class AddTodoActivity extends AppCompatActivity implements DatePickerFrag
         final String description = mDescriptionNote.getText().toString();
         final Boolean completed = mCompletedCheckBox.isChecked();
 
+        if(name.isEmpty()) {
+            Toast.makeText(AddTodoActivity.this, R.string.add_todo_name_missing, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         if(mode == Mode.ADD) {
             addTodo(name, description, completed);
         } else {
