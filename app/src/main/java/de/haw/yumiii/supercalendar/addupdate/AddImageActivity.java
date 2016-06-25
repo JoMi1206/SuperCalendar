@@ -53,12 +53,10 @@ public class AddImageActivity extends AppCompatActivity implements DatePickerFra
     public static final int REQUEST_CAMERA = 1;
     public static final int SELECT_FILE = 2;
 
-    //TODO add to strings.xml
-    final String PARAM_CAMERA = "Take Photo";
-    final String PARAM_LIBRARY = "Choose from Library";
-    final String PARAM_CANCEL = "Cancel";
+    final String PARAM_CAMERA = "Camera";
+    final String PARAM_LIBRARY = "Library";
 
-    private String userChoosenTask;
+    private String mUserChoosenTask;
 
     private EditText mDescriptionNote;
     private Button mDateButton;
@@ -86,8 +84,9 @@ public class AddImageActivity extends AppCompatActivity implements DatePickerFra
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_add_image);
+
+        setTitle(R.string.title_activity_add_edit_image);
 
 
         mDescriptionNote = (EditText) findViewById(R.id.description_edit_text);
@@ -346,27 +345,30 @@ public class AddImageActivity extends AppCompatActivity implements DatePickerFra
     }
 
     private void selectImage() {
-        final CharSequence[] items = {PARAM_CAMERA, PARAM_LIBRARY, PARAM_CANCEL};
+        final String cam_text = getApplicationContext().getResources().getString(R.string.add_image_camera);
+        final String lib_text = getApplicationContext().getResources().getString(R.string.add_image_library);
+        final String cancel_text = getApplicationContext().getResources().getString(R.string.cancel);
+        final CharSequence[] items = {cam_text, lib_text, cancel_text};
 
         AlertDialog.Builder builder = new AlertDialog.Builder(AddImageActivity.this);
-        builder.setTitle("Add Photo!");
+        builder.setTitle(R.string.add_image_choose);
         builder.setItems(items, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int item) {
 
-                if (items[item].equals(PARAM_CAMERA)) {
+                if (items[item].equals(cam_text)) {
                     boolean result = Utility.checkPermission(AddImageActivity.this);
-                    userChoosenTask = PARAM_CAMERA;
+                    mUserChoosenTask = PARAM_CAMERA;
                     if (result)
                         dispatchTakePictureIntent();
 
-                } else if (items[item].equals(PARAM_LIBRARY)) {
+                } else if (items[item].equals(lib_text)) {
                     boolean result = Utility.checkPermission(AddImageActivity.this);
-                    userChoosenTask = PARAM_LIBRARY;
+                    mUserChoosenTask = PARAM_LIBRARY;
                     if (result)
                         galleryIntent();
 
-                } else if (items[item].equals(PARAM_CANCEL)) {
+                } else if (items[item].equals(cancel_text)) {
                     dialog.dismiss();
                 }
             }
@@ -429,9 +431,9 @@ public class AddImageActivity extends AppCompatActivity implements DatePickerFra
         switch (requestCode) {
             case Utility.MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    if (userChoosenTask.equals(PARAM_CAMERA))
+                    if (mUserChoosenTask.equals(PARAM_CAMERA))
                         dispatchTakePictureIntent();
-                    else if (userChoosenTask.equals(PARAM_LIBRARY))
+                    else if (mUserChoosenTask.equals(PARAM_LIBRARY))
                         galleryIntent();
                 } else {
                     Toast.makeText(AddImageActivity.this, "Permission denied!", Toast.LENGTH_LONG).show();

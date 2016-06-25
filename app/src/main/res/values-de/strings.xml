@@ -1,0 +1,51 @@
+<resources>
+    <string name="app_name">SuperCalendar</string>
+
+    <string name="title_activity_add_edit_todo">Aufgabe hinzufügen/bearbeiten</string>
+    <string name="title_activity_add_edit_image">Bild hinzufügen/bearbeiten</string>
+    <string name="title_activity_choose_add_type">Element hinzufügen</string>
+
+    <string name="parse_app_id">p6hd1KznrdoeApttOKGaPmYKn4GIB4KiQWyivdUl</string>
+    <string name="parse_client_key">LrmimA0sWej7o7mLBWueqQKvICefQnWHA83REYEE</string>
+
+    <string name="cancel">Abbrechen</string>
+
+    <string name="action_reload">Aktualisieren</string>
+    <string name="action_choose_date">Datum auswählen</string>
+    <string name="action_logout">Logout</string>
+
+    <string name="add_todo_name">Name</string>
+    <string name="add_todo_completed">Abgeschlossen</string>
+    <string name="add_todo_duedate">Fälligkeitsdatum</string>
+    <string name="add_todo_name_missing">Bitte geben Sie einen Namen für das Element ein.</string>
+
+    <string name="add_image_select_image">Bild auswählen</string>
+    <string name="add_image_date">Datum</string>
+    <string name="add_image_image_missing">Es wurde kein Bild ausgewählt.</string>
+    <string name="add_image_description_missing">Bitte geben Sie eine Beschreibung für das Bild ein.</string>
+    <string name="add_image_choose">Bild hinzufügen</string>
+    <string name="add_image_camera">Bild aufnehmen</string>
+    <string name="add_image_library">Von Galerie auswählen</string>
+
+    <string name="progress_title_loading">Laden</string>
+    <string name="progress_message_loading">Bitte warten...</string>
+
+    <string name="progress_title_save">Element speichern</string>
+    <string name="progress_message_save">Bitte warten...</string>
+
+    <string name="add_decription">Beschreibung</string>
+    <string name="add_date_hint">Klicken, um Datum einzugeben</string>
+    <string name="add_save">Speichern</string>
+
+    <string name="toast_todo_added">Aufgabe hinzugefügt</string>
+    <string name="toast_todo_updated">Aufgabe aktualisiert</string>
+
+    <string name="toast_image_added">Bild hinzugefügt</string>
+    <string name="toast_image_updated">Bild aktualisiert</string>
+
+    <string name="toast_save_failed">Elemtn konnte nicht gespeichert werden.</string>
+
+    <string name="choose_add_todo">Aufgabe hinzufügen</string>
+    <string name="choose_add_image">Bild hinzufügen</string>
+
+</resources>

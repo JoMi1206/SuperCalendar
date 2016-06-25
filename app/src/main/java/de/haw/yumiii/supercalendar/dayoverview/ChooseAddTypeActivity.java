@@ -19,6 +19,8 @@ public class ChooseAddTypeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_add_type);
 
+        setTitle(R.string.title_activity_choose_add_type);
+
         final Button addTodo = (Button) findViewById(R.id.choose_add_todo);
         addTodo.setOnClickListener(new View.OnClickListener() {
             @Override

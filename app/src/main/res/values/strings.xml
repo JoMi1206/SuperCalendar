@@ -2,6 +2,8 @@
     <string name="app_name">SuperCalendar</string>
 
     <string name="title_activity_add_edit_todo">Add/Edit Todo</string>
+    <string name="title_activity_add_edit_image">Add/Edit Image</string>
+    <string name="title_activity_choose_add_type">Add item</string>
 
     <string name="parse_app_id">p6hd1KznrdoeApttOKGaPmYKn4GIB4KiQWyivdUl</string>
     <string name="parse_client_key">LrmimA0sWej7o7mLBWueqQKvICefQnWHA83REYEE</string>
@@ -21,6 +23,9 @@
     <string name="add_image_date">Date</string>
     <string name="add_image_image_missing">No image selected</string>
     <string name="add_image_description_missing">Please fill out the description</string>
+    <string name="add_image_choose">Add photo</string>
+    <string name="add_image_camera">Take a picture</string>
+    <string name="add_image_library">Choose from library</string>
 
     <string name="progress_title_loading">Loading</string>
     <string name="progress_message_loading">Please wait while loading...</string>
@@ -42,8 +47,5 @@
 
     <string name="choose_add_todo">Add ToDo</string>
     <string name="choose_add_image">Add Image</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

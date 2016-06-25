@@ -56,6 +56,8 @@ public class AddTodoActivity extends AppCompatActivity implements DatePickerFrag
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_todo);
 
+        setTitle(R.string.title_activity_add_edit_todo);
+
         mProgressDialog = new ProgressDialog(this);
         mProgressDialog.setCancelable(false);
         mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
