@@ -44,7 +44,8 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
         int day = args.getInt(ARG_DAY);
 
         // Create a new instance of DatePickerDialog and return it
-        return new DatePickerDialog(getActivity(), this, year, month, day);
+        // Month -1 because the Month comes from JodaTime
+        return new DatePickerDialog(getActivity(), this, year, month - 1, day);
     }
 
     @Override

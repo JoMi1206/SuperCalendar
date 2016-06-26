@@ -16,15 +16,18 @@ import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import de.haw.yumiii.supercalendar.R;
 import de.haw.yumiii.supercalendar.dayoverview.TodoAdapter;
 import de.haw.yumiii.supercalendar.rest.model.ImageItem;
 import de.haw.yumiii.supercalendar.rest.model.TodoItem;
 import de.haw.yumiii.supercalendar.rest.model.UserItem;
+import de.haw.yumiii.supercalendar.utils.Settings;
 
 public class MonthActivity extends AppCompatActivity {
 
@@ -89,8 +92,11 @@ public class MonthActivity extends AppCompatActivity {
 
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Todo");
         query.whereEqualTo("owner", ParseUser.getCurrentUser());
-//        query.whereGreaterThanOrEqualTo("due_date", firstDay.toDate());
-//        query.whereLessThanOrEqualTo("due_date", lastDay.toDate());
+        //TODO Einschränkung
+        query.whereGreaterThanOrEqualTo("due_date", firstDay.toDate());
+        query.whereLessThanOrEqualTo("due_date", lastDay.toDate());
+//        Log.d("MyApp", "Todo greater date than: " + new SimpleDateFormat(Settings.DATE_FORMAT).format(firstDay.toDate()));
+//        Log.d("MyApp", "Todo less date than: " + new SimpleDateFormat(Settings.DATE_FORMAT).format(lastDay.toDate()));
 
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
@@ -123,8 +129,8 @@ public class MonthActivity extends AppCompatActivity {
 
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Image");
         query.whereEqualTo("owner", ParseUser.getCurrentUser());
-        query.whereGreaterThanOrEqualTo("due_date", firstDay.toDate());
-        query.whereLessThanOrEqualTo("due_date", lastDay.toDate());
+        query.whereGreaterThanOrEqualTo("date", firstDay.toDate());
+        query.whereLessThanOrEqualTo("date", lastDay.toDate());
 
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
@@ -151,6 +157,7 @@ public class MonthActivity extends AppCompatActivity {
     }
 
     private void buildAdapterList() {
+        mItemList.clear();
 
         // this maps hold per dayOfMonth the UserItems
         HashMap<Integer, ArrayList<UserItem>> itemsPerDay = new HashMap<>();
@@ -170,10 +177,8 @@ public class MonthActivity extends AppCompatActivity {
         }
 
         // Build monthList
-        DateTimeFormatter dtf = DateTimeFormat.forPattern("dddd', 'dd.' 'MMMM");
+        DateTimeFormatter dtf = DateTimeFormat.forPattern("EEEE', 'dd.' 'MMMM");
         for(int i=1; i <= date.dayOfMonth().getMaximumValue(); i++) {
-            mItemList.clear();
-
             if(itemsPerDay.get(i).isEmpty()) {
                 continue;
             }
