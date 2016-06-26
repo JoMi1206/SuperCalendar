@@ -16,22 +16,26 @@ public class ImageItem extends UserItem {
 
 
     private ParseFile imageFile;
+    private int imageWidth;
+    private int imageHeight;
 
     public ImageItem() {
         super();
     }
 
 
-    public ImageItem(ParseFile imageFile, String note, Date date) {
+    public ImageItem(ParseFile imageFile, int imageWidth, int imageHeight, String note, Date date) {
         super(note, date);
         this.imageFile = imageFile;
-        this.description = note;
+        this.imageWidth = imageWidth;
+        this.imageHeight = imageHeight;
     }
 
-    public ImageItem(String objectId, ParseFile imageFile, String note, Date date) {
+    public ImageItem(String objectId, ParseFile imageFile, int imageWidth, int imageHeight, String note, Date date) {
         super(objectId, note, date);
         this.imageFile = imageFile;
-        this.description = note;
+        this.imageWidth = imageWidth;
+        this.imageHeight = imageHeight;
     }
 
     public ParseFile getImageFile() {
@@ -40,6 +44,22 @@ public class ImageItem extends UserItem {
 
     public void setImageFile(ParseFile imageFile) {
         this.imageFile = imageFile;
+    }
+
+    public int getImageWidth() {
+        return imageWidth;
+    }
+
+    public void setImageWidth(int imageWidth) {
+        this.imageWidth = imageWidth;
+    }
+
+    public int getImageHeight() {
+        return imageHeight;
+    }
+
+    public void setImageHeight(int imageHeight) {
+        this.imageHeight = imageHeight;
     }
 
     @Override

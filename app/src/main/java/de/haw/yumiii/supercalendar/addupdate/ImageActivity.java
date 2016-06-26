@@ -16,6 +16,7 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.util.Size;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -76,6 +77,8 @@ public class ImageActivity extends AppCompatActivity implements DatePickerFragme
 
     private String imageId = "-1";
     private byte[] mImageBytes;
+    private int mImageWidth;
+    private int mImageHeight;
 
     public enum Mode {ADD, UPDATE};
 
@@ -138,7 +141,9 @@ public class ImageActivity extends AppCompatActivity implements DatePickerFragme
 
                     if (e == null) {
                         //TODO load imageFile and show
-                        mImageItemToUpdate = new ImageItem(imageobject.getObjectId(), imageobject.getParseFile("image"), imageobject.getString("description"), imageobject.getDate("date"));
+                        mImageItemToUpdate = new ImageItem(imageobject.getObjectId(), imageobject.getParseFile("image"),
+                                                            imageobject.getInt("imageWidth"), imageobject.getInt("imageHeight"),
+                                                            imageobject.getString("description"), imageobject.getDate("date"));
                         mImageFile = mImageItemToUpdate.getImageFile();
                         if(mImageFile != null) {
                             mImageView.setParseFile(mImageFile);
@@ -217,6 +222,10 @@ public class ImageActivity extends AppCompatActivity implements DatePickerFragme
                 if(e == null) {
                     // if the image is stored successfully -> add it to the imageItem and save the imageItem
                     newImage.put("image", mImageFile);
+                    newImage.put("imageWidth", mImageWidth);
+                    newImage.put("imageHeight", mImageHeight);
+
+                    Log.d("MyApp", "addImage - imageSize = " + mImageWidth + "|" + mImageHeight);
 
                     newImage.saveInBackground(new SaveCallback() {
                         @Override
@@ -283,6 +292,10 @@ public class ImageActivity extends AppCompatActivity implements DatePickerFragme
                                 mProgressDialog.dismiss();
                                 // if the image is stored successfully -> add it to the imageItem and save the imageItem
                                 image.put("image", mImageFile);
+                                image.put("imageWidth", mImageWidth);
+                                image.put("imageHeight", mImageHeight);
+
+                                Log.d("MyApp", "updateImage - imageSize = " + mImageWidth + "|" + mImageHeight);
 
                                 image.saveInBackground(new SaveCallback() {
                                     @Override
@@ -468,6 +481,9 @@ public class ImageActivity extends AppCompatActivity implements DatePickerFragme
         Bitmap imageScaled = Bitmap.createScaledBitmap(bm, 1000, 1000
                 * bm.getHeight() / bm.getWidth(), false);
         mImageView.setImageBitmap(imageScaled);
+        mImageWidth = imageScaled.getWidth();
+        mImageHeight = imageScaled.getHeight();
+        Log.d("MyApp", "setImage - imageSize = " + mImageWidth + "|" + mImageHeight);
 
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         imageScaled.compress(Bitmap.CompressFormat.JPEG, 100, bos);
@@ -486,6 +502,10 @@ public class ImageActivity extends AppCompatActivity implements DatePickerFragme
             imageScaled = Bitmap.createScaledBitmap(bitmap, 1000, 1000 * bitmap.getHeight() / bitmap.getWidth(), false);
         }
         mImageView.setImageBitmap(imageScaled);
+        mImageWidth = imageScaled.getWidth();
+        mImageHeight = imageScaled.getHeight();
+        Log.d("MyApp", "setImage - imageSize = " + mImageWidth + "|" + mImageHeight);
+
 
         // Save the byte array for storing to the server
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();

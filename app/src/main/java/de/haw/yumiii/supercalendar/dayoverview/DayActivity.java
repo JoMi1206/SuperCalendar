@@ -204,7 +204,9 @@ public class DayActivity extends AppCompatActivity implements DatePickerFragment
                     // If there are results, update the list of images
                     mImageItemListAll.clear();
                     for (ParseObject image : imageObject) {
-                        ImageItem imageItem = new ImageItem(image.getObjectId(), image.getParseFile("image"), image.getString("description"), image.getDate("date"));
+                        ImageItem imageItem = new ImageItem(image.getObjectId(), image.getParseFile("image"),
+                                                            image.getInt("imageWidth"), image.getInt("imageHeight"),
+                                                            image.getString("description"), image.getDate("date"));
                         mImageItemListAll.add(imageItem);
                     }
                     filterDailyList();

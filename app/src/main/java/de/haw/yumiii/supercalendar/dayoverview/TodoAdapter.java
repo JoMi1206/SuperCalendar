@@ -110,13 +110,10 @@ public class TodoAdapter extends BaseAdapter {
             ParseFile imageFile = imageItem.getImageFile();
             if(imageFile != null) {
                 mImageView.setParseFile(imageFile);
-                mImageView.loadInBackground(new GetDataCallback() {
-                    @Override
-                    public void done(byte[] data, ParseException e) {
-                        mImageView.getLayoutParams().height = getHeightOfBMPInImageView(mImageView);
-                        mImageView.requestLayout();
-                    }
-                });
+                mImageView.loadInBackground(null);
+                mImageView.getLayoutParams().height = imageItem.getImageHeight();
+                Log.d("MyApp", "SetImageView height: " + imageItem.getImageHeight());
+                mImageView.requestLayout();
             }
 
             return rowView;
