@@ -1,5 +1,7 @@
 package de.haw.yumiii.supercalendar.rest.model;
 
+import org.joda.time.LocalDate;
+
 import java.util.Date;
 
 /**
@@ -9,20 +11,20 @@ public class UserItem {
 
     protected String _id;
     protected String description;
-    protected Date date;
+    protected LocalDate date;
 
     public UserItem() {
     }
 
     public UserItem(String description, Date date) {
         this.description = description;
-        this.date = date;
+        this.date = new LocalDate(date);
     }
 
     public UserItem(String id, String description, Date date) {
         this._id = id;
         this.description = description;
-        this.date = date;
+        this.date = new LocalDate(date);
     }
 
     public String get_id() {
@@ -37,11 +39,11 @@ public class UserItem {
         this.description = description;
     }
 
-    public Date getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
     public void setDate(Date date) {
-        this.date = date;
+        this.date = new LocalDate(date);
     }
 }

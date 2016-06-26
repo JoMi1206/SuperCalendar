@@ -1,10 +1,8 @@
 package de.haw.yumiii.supercalendar.dayoverview;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,8 +11,6 @@ import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
-import com.parse.GetDataCallback;
-import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseImageView;
 
@@ -23,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import de.haw.yumiii.supercalendar.R;
+import de.haw.yumiii.supercalendar.monthoverview.SectionItem;
 import de.haw.yumiii.supercalendar.rest.model.ImageItem;
 import de.haw.yumiii.supercalendar.rest.model.TodoItem;
 import de.haw.yumiii.supercalendar.rest.model.UserItem;
@@ -34,17 +31,17 @@ public class TodoAdapter extends BaseAdapter {
 
     private Context mContext;
     private LayoutInflater mInflater;
-    private ArrayList<UserItem> mDataSource;
+    private ArrayList<Object> mDataSource;
 
     ParseImageView mImageView;
 
-    public TodoAdapter(Context context, ArrayList<UserItem> items) {
+    public TodoAdapter(Context context, ArrayList<Object> items) {
         mContext = context;
         mDataSource = items;
         mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
-    public void setmDataSource(ArrayList<UserItem> mDataSource) {
+    public void setmDataSource(ArrayList<Object> mDataSource) {
         this.mDataSource = mDataSource;
     }
 
@@ -52,7 +49,7 @@ public class TodoAdapter extends BaseAdapter {
         mDataSource.clear();
     }
 
-    public void addAll(Collection<UserItem> items) {
+    public void addAll(Collection<Object> items) {
         mDataSource.addAll(items);
         notifyDataSetChanged();
     }
@@ -112,9 +109,19 @@ public class TodoAdapter extends BaseAdapter {
                 mImageView.setParseFile(imageFile);
                 mImageView.loadInBackground(null);
                 mImageView.getLayoutParams().height = imageItem.getImageHeight();
-                Log.d("MyApp", "SetImageView height: " + imageItem.getImageHeight());
                 mImageView.requestLayout();
             }
+
+            return rowView;
+        }
+
+        // Get View for SectionItem
+        if(getItem(position) instanceof SectionItem) {
+            View rowView = mInflater.inflate(R.layout.list_item_section, parent, false);
+            TextView titleTextView = (TextView) rowView.findViewById(R.id.list_item_section_title);
+
+            SectionItem sectionItem = (SectionItem) getItem(position);
+            titleTextView.setText(sectionItem.getTitle());
 
             return rowView;
         }

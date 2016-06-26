@@ -4,6 +4,12 @@
     tools:context=".dayoverview.DayActivity">
 
     <item
+        android:id="@+id/action_showmonth"
+        android:icon="@drawable/ic_action_list"
+        android:title="@string/action_show_month"
+        app:showAsAction="ifRoom"/>
+
+    <item
         android:id="@+id/action_choosedate"
         android:icon="@drawable/ic_date_range"
         android:title="@string/action_choose_date"

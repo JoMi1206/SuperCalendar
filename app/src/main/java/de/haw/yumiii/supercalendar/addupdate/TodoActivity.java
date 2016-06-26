@@ -42,6 +42,7 @@ public class TodoActivity extends AppCompatActivity implements DatePickerFragmen
     private CheckBox mCompletedCheckBox;
 
     private Date dueDate = null;
+    SimpleDateFormat mSdf = new SimpleDateFormat(Settings.DATE_FORMAT);
 
     private Mode mode = Mode.ADD;
 
@@ -67,12 +68,10 @@ public class TodoActivity extends AppCompatActivity implements DatePickerFragmen
         mDateButton = (Button) findViewById(R.id.date_button);
         mCompletedCheckBox = (CheckBox) findViewById(R.id.completed_checkbox);
 
-
-        SimpleDateFormat sdf = new SimpleDateFormat(Settings.DATE_FORMAT);
         String date = this.getIntent().getExtras().getString(PARAM_DATE);
         if(date != null) {
             try {
-                dueDate = sdf.parse(date);
+                dueDate = mSdf.parse(date);
                 mDateButton.setText(date);
             } catch (ParseException e) {
                 e.printStackTrace();
@@ -243,9 +242,8 @@ public class TodoActivity extends AppCompatActivity implements DatePickerFragmen
     public void onFragmentDateSetListener(Date newDate) {
         dueDate = newDate;
 
-        SimpleDateFormat sdf = new SimpleDateFormat(Settings.DATE_FORMAT);
-        Log.d("MyApp", "onFragmentDateSetListener called, Date: " + sdf.format(dueDate));
-        mDateButton.setText(sdf.format(dueDate));
+        Log.d("MyApp", "onFragmentDateSetListener called, Date: " + mSdf.format(dueDate));
+        mDateButton.setText(mSdf.format(dueDate));
     }
 
 }

@@ -12,42 +12,42 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.parse.DeleteCallback;
 import com.parse.FindCallback;
-import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import org.joda.time.DateTimeComparator;
+import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import de.haw.yumiii.supercalendar.addupdate.ImageActivity;
-import de.haw.yumiii.supercalendar.addupdate.TodoActivity;
-import de.haw.yumiii.supercalendar.utils.DatePickerFragment;
 import de.haw.yumiii.supercalendar.LoginDispatchActivity;
 import de.haw.yumiii.supercalendar.R;
-import de.haw.yumiii.supercalendar.utils.Settings;
+import de.haw.yumiii.supercalendar.addupdate.ImageActivity;
+import de.haw.yumiii.supercalendar.addupdate.TodoActivity;
+import de.haw.yumiii.supercalendar.monthoverview.MonthActivity;
 import de.haw.yumiii.supercalendar.rest.model.ImageItem;
 import de.haw.yumiii.supercalendar.rest.model.TodoItem;
-import de.haw.yumiii.supercalendar.rest.model.UserItem;
+import de.haw.yumiii.supercalendar.utils.DatePickerFragment;
+import de.haw.yumiii.supercalendar.utils.Settings;
 
 public class DayActivity extends AppCompatActivity implements DatePickerFragment.OnFragmentDateSetListener {
 
-    private Date currentDate = new Date();
-    SimpleDateFormat sdf = new SimpleDateFormat(Settings.DATE_FORMAT);
+    private LocalDate mCurrentDate = new LocalDate();
+    DateTimeFormatter sdf = DateTimeFormat.forPattern(Settings.DATE_FORMAT);
 
     private ListView mListView;
 
@@ -56,11 +56,12 @@ public class DayActivity extends AppCompatActivity implements DatePickerFragment
     private final int ADD_IMAGE_REQUEST = 3;
     private final int UPDATE_IMAGE_REQUEST = 4;
     private final int CHOOSE_ADD_TYPE_REQUEST = 5;
+    private final int SHOW_MONTH_REQUEST = 6;
 
     private List<TodoItem> mTodoItemListAll = new ArrayList<>();
     private List<ImageItem> mImageItemListAll = new ArrayList<>();
 
-    private List<UserItem> mUserItemListCurrentDay = new ArrayList<>();
+    private List<Object> mUserItemListCurrentDay = new ArrayList<>();
 
     private ProgressDialog mProgressDialog;
 
@@ -76,7 +77,7 @@ public class DayActivity extends AppCompatActivity implements DatePickerFragment
         mProgressDialog.setCancelable(false);
         mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 
-        setTitle(sdf.format(currentDate));
+        setTitle(sdf.print(mCurrentDate));
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -90,10 +91,10 @@ public class DayActivity extends AppCompatActivity implements DatePickerFragment
 
         loadItems();
 
-        mListView = (ListView) findViewById(R.id.todo_list_view);
+        mListView = (ListView) findViewById(R.id.day_list_view);
 
         // Custom Adapter to show the items in a nice way
-        TodoAdapter adapter = new TodoAdapter(this, new ArrayList<UserItem>());
+        TodoAdapter adapter = new TodoAdapter(this, new ArrayList<Object>());
         mListView.setAdapter(adapter);
 
         // Open the edit Activity to edit the selected Item
@@ -112,7 +113,7 @@ public class DayActivity extends AppCompatActivity implements DatePickerFragment
                     detailIntent.putExtra(TodoActivity.PARAM_NAME, selectedTodo.getName());
                     detailIntent.putExtra(TodoActivity.PARAM_DESCRIPTION, selectedTodo.getDescription());
 
-                    detailIntent.putExtra(TodoActivity.PARAM_DATE, sdf.format(selectedTodo.getDate()));
+                    detailIntent.putExtra(TodoActivity.PARAM_DATE, sdf.print(selectedTodo.getDate()));
                     detailIntent.putExtra(TodoActivity.PARAM_COMPLETED, selectedTodo.isCompleted());
 
                     startActivityForResult(detailIntent, UPDATE_TODO_REQUEST);
@@ -125,7 +126,7 @@ public class DayActivity extends AppCompatActivity implements DatePickerFragment
 
                     detailIntent.putExtra(ImageActivity.PARAM_ID, selectedImage.get_id());
                     detailIntent.putExtra(ImageActivity.PARAM_NOTE, selectedImage.getDescription());
-                    detailIntent.putExtra(ImageActivity.PARAM_DATE, sdf.format(selectedImage.getDate()));
+                    detailIntent.putExtra(ImageActivity.PARAM_DATE, sdf.print(selectedImage.getDate()));
 
                     startActivityForResult(detailIntent, UPDATE_IMAGE_REQUEST);
                 }
@@ -163,8 +164,6 @@ public class DayActivity extends AppCompatActivity implements DatePickerFragment
      * Loads all To-Do-Items from the server and stores them in <i>mTodoItemListAll</i>.
      */
     private void loadTodoItems() {
-        setProgressBarIndeterminateVisibility(true);
-
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Todo");
         query.whereEqualTo("owner", ParseUser.getCurrentUser());
 
@@ -180,7 +179,6 @@ public class DayActivity extends AppCompatActivity implements DatePickerFragment
                         mTodoItemListAll.add(todoItem);
                     }
                     filterDailyList();
-                    setProgressBarIndeterminateVisibility(false);
                 } else {
                     Log.d(getClass().getSimpleName(), "Error: " + e.getMessage());
                 }
@@ -232,6 +230,16 @@ public class DayActivity extends AppCompatActivity implements DatePickerFragment
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
+        if (id == R.id.action_showmonth) {
+            Intent monthIntent = new Intent(this, MonthActivity.class);
+            Log.d("MyApp", "Call Intent with Month: " + mCurrentDate.getMonthOfYear() + " Year: " + mCurrentDate.getYear());
+            monthIntent.putExtra(MonthActivity.PARAM_MONTH, mCurrentDate.getMonthOfYear());
+            monthIntent.putExtra(MonthActivity.PARAM_YEAR, mCurrentDate.getYear());
+
+            startActivityForResult(monthIntent, SHOW_MONTH_REQUEST);
+            return true;
+        }
+
         if (id == R.id.action_reload) {
             loadItems();
             return true;
@@ -267,17 +275,9 @@ public class DayActivity extends AppCompatActivity implements DatePickerFragment
         DialogFragment newFragment = new DatePickerFragment();
         Bundle args = new Bundle();
 
-        Calendar cal = Calendar.getInstance();
-
-        cal.setTime(currentDate);
-
-        int year = cal.get(Calendar.YEAR);
-        int month = cal.get(Calendar.MONTH);
-        int day = cal.get(Calendar.DAY_OF_MONTH);
-
-        args.putInt(DatePickerFragment.ARG_YEAR, year);
-        args.putInt(DatePickerFragment.ARG_MONTH, month);
-        args.putInt(DatePickerFragment.ARG_DAY, day);
+        args.putInt(DatePickerFragment.ARG_YEAR, mCurrentDate.getYear());
+        args.putInt(DatePickerFragment.ARG_MONTH, mCurrentDate.getMonthOfYear());
+        args.putInt(DatePickerFragment.ARG_DAY, mCurrentDate.getDayOfMonth());
 
         newFragment.setArguments(args);
         newFragment.show(getSupportFragmentManager(), "datePicker");
@@ -285,8 +285,8 @@ public class DayActivity extends AppCompatActivity implements DatePickerFragment
 
     @Override
     public void onFragmentDateSetListener(Date newDate) {
-        currentDate = newDate;
-        setTitle(sdf.format(currentDate));
+        mCurrentDate = new LocalDate(newDate);
+        setTitle(sdf.print(mCurrentDate));
         // show day specific items
         filterDailyList();
     }
@@ -315,7 +315,7 @@ public class DayActivity extends AppCompatActivity implements DatePickerFragment
                 if(data.getStringExtra(ChooseAddTypeActivity.PARA_TYPE).equals(ChooseAddTypeActivity.ADD_TODO)) {
                     Intent intent = new Intent(DayActivity.this, TodoActivity.class);
                     intent.putExtra(TodoActivity.PARAM_IS_MODE_ADD, true);
-                    intent.putExtra(TodoActivity.PARAM_DATE, sdf.format(currentDate));
+                    intent.putExtra(TodoActivity.PARAM_DATE, sdf.print(mCurrentDate));
                     startActivityForResult(intent, ADD_TODO_REQUEST);
                     return;
                 }
@@ -323,7 +323,7 @@ public class DayActivity extends AppCompatActivity implements DatePickerFragment
                 if(data.getStringExtra(ChooseAddTypeActivity.PARA_TYPE).equals(ChooseAddTypeActivity.ADD_IMAGE)) {
                     Intent intent = new Intent(DayActivity.this, ImageActivity.class);
                     intent.putExtra(ImageActivity.PARAM_IS_MODE_ADD, true);
-                    intent.putExtra(ImageActivity.PARAM_DATE, sdf.format(currentDate));
+                    intent.putExtra(ImageActivity.PARAM_DATE, sdf.print(mCurrentDate));
                     startActivityForResult(intent, ADD_IMAGE_REQUEST);
                     return;
                 }
@@ -344,13 +344,13 @@ public class DayActivity extends AppCompatActivity implements DatePickerFragment
         DateTimeComparator dtc = DateTimeComparator.getDateOnlyInstance();
 
         for(TodoItem item: mTodoItemListAll) {
-            if(dtc.compare(item.getDate(), currentDate) == 0) {
+            if(item.getDate().equals(mCurrentDate)) {
                 mUserItemListCurrentDay.add(item);
             }
         }
 
         for(ImageItem item: mImageItemListAll) {
-            if(dtc.compare(item.getDate(), currentDate) == 0) {
+            if(item.getDate().equals(mCurrentDate)) {
                 mUserItemListCurrentDay.add(item);
             }
         }

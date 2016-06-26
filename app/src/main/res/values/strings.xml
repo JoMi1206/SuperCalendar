@@ -10,6 +10,7 @@
 
     <string name="cancel">Cancel</string>
 
+    <string name="action_show_month">Show month</string>
     <string name="action_reload">Reload Todos</string>
     <string name="action_choose_date">Choose Date</string>
     <string name="action_logout">Logout</string>

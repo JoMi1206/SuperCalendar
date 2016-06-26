@@ -10,6 +10,7 @@
 
     <string name="cancel">Abbrechen</string>
 
+    <string name="action_show_month">Monat anzeigen</string>
     <string name="action_reload">Aktualisieren</string>
     <string name="action_choose_date">Datum auswählen</string>
     <string name="action_logout">Logout</string>
