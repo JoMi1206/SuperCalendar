@@ -53,7 +53,6 @@ public class TodoItem extends UserItem {
         return "TodoItem{" +
                 "name='" + name + '\n' +
                 "description='" + description + '\n' +
-                "date='" + new SimpleDateFormat(Settings.DATE_FORMAT).format(date) + '\n' +
                 ", completed=" + completed +
                 '}';
     }
