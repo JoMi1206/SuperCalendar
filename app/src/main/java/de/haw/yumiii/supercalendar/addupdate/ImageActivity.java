@@ -202,7 +202,7 @@ public class ImageActivity extends AppCompatActivity implements DatePickerFragme
         // With Parse
         final ParseObject newImage = new ParseObject("Image");
         newImage.put("description", description);
-        newImage.put("date", mDate);
+        newImage.put("date", mDate.toDate());
         newImage.put("owner", ParseUser.getCurrentUser());
 
         // show a progress dialog
@@ -281,7 +281,7 @@ public class ImageActivity extends AppCompatActivity implements DatePickerFragme
 
                     // Now let's update it with some new data.
                     image.put("description", description);
-                    image.put("date", mDate);
+                    image.put("date", mDate.toDate());
 
                     mImageFile.saveInBackground(new SaveCallback() {
                         @Override

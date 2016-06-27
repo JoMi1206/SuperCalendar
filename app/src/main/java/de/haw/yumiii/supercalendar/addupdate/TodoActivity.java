@@ -141,7 +141,7 @@ public class TodoActivity extends AppCompatActivity implements DatePickerFragmen
         newTodo.put("name", name);
         newTodo.put("description", description);
         newTodo.put("completed", completed);
-        newTodo.put("due_date", mDueDate);
+        newTodo.put("due_date", mDueDate.toDate());
         newTodo.put("owner", ParseUser.getCurrentUser());
         newTodo.saveInBackground(new SaveCallback() {
             @Override
@@ -186,7 +186,7 @@ public class TodoActivity extends AppCompatActivity implements DatePickerFragmen
                     todo.put("name", name);
                     todo.put("description", description);
                     todo.put("completed", completed);
-                    todo.put("due_date", mDueDate);
+                    todo.put("due_date", mDueDate.toDate());
                     todo.saveInBackground(new SaveCallback() {
                         @Override
                         public void done(com.parse.ParseException e) {
