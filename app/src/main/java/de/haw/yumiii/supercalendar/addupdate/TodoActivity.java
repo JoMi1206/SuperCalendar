@@ -18,6 +18,10 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
+import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -41,8 +45,8 @@ public class TodoActivity extends AppCompatActivity implements DatePickerFragmen
     private Button mDateButton;
     private CheckBox mCompletedCheckBox;
 
-    private Date dueDate = null;
-    SimpleDateFormat mSdf = new SimpleDateFormat(Settings.DATE_FORMAT);
+    private LocalDate mDueDate = null;
+    DateTimeFormatter mSdf = DateTimeFormat.forPattern(Settings.DATE_FORMAT);
 
     private Mode mode = Mode.ADD;
 
@@ -70,12 +74,8 @@ public class TodoActivity extends AppCompatActivity implements DatePickerFragmen
 
         String date = this.getIntent().getExtras().getString(PARAM_DATE);
         if(date != null) {
-            try {
-                dueDate = mSdf.parse(date);
-                mDateButton.setText(date);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
+            mDueDate = mSdf.parseLocalDate(date);
+            mDateButton.setText(date);
         }
 
         boolean mode_add = this.getIntent().getExtras().getBoolean(PARAM_IS_MODE_ADD);
@@ -141,7 +141,7 @@ public class TodoActivity extends AppCompatActivity implements DatePickerFragmen
         newTodo.put("name", name);
         newTodo.put("description", description);
         newTodo.put("completed", completed);
-        newTodo.put("due_date", dueDate);
+        newTodo.put("due_date", mDueDate);
         newTodo.put("owner", ParseUser.getCurrentUser());
         newTodo.saveInBackground(new SaveCallback() {
             @Override
@@ -186,7 +186,7 @@ public class TodoActivity extends AppCompatActivity implements DatePickerFragmen
                     todo.put("name", name);
                     todo.put("description", description);
                     todo.put("completed", completed);
-                    todo.put("due_date", dueDate);
+                    todo.put("due_date", mDueDate);
                     todo.saveInBackground(new SaveCallback() {
                         @Override
                         public void done(com.parse.ParseException e) {
@@ -221,29 +221,19 @@ public class TodoActivity extends AppCompatActivity implements DatePickerFragmen
         DialogFragment datePickerFragment = new DatePickerFragment();
         Bundle args = new Bundle();
 
-        Calendar cal = Calendar.getInstance();
-
-        if(dueDate != null) {
-            cal.setTime(dueDate);
-        }
-
-        int year = cal.get(Calendar.YEAR);
-        int month = cal.get(Calendar.MONTH);
-        int day = cal.get(Calendar.DAY_OF_MONTH);
-
-        args.putInt(DatePickerFragment.ARG_YEAR, year);
-        args.putInt(DatePickerFragment.ARG_MONTH, month);
-        args.putInt(DatePickerFragment.ARG_DAY, day);
+        args.putInt(DatePickerFragment.ARG_YEAR, mDueDate.getYear());
+        args.putInt(DatePickerFragment.ARG_MONTH, mDueDate.getMonthOfYear());
+        args.putInt(DatePickerFragment.ARG_DAY, mDueDate.getDayOfMonth());
 
         datePickerFragment.setArguments(args);
         datePickerFragment.show(getSupportFragmentManager(), "datePicker");
     }
 
     public void onFragmentDateSetListener(Date newDate) {
-        dueDate = newDate;
+        mDueDate = new LocalDate(newDate);
 
-        Log.d("MyApp", "onFragmentDateSetListener called, Date: " + mSdf.format(dueDate));
-        mDateButton.setText(mSdf.format(dueDate));
+        Log.d("MyApp", "onFragmentDateSetListener called, Date: " + mSdf.print(mDueDate));
+        mDateButton.setText(mSdf.print(mDueDate));
     }
 
 }

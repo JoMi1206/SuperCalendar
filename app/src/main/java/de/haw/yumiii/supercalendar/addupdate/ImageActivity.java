@@ -16,7 +16,6 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.util.Size;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -30,10 +29,13 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
+import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -68,8 +70,8 @@ public class ImageActivity extends AppCompatActivity implements DatePickerFragme
 
     private ImageItem mImageItemToUpdate;
 
-    private Date mDate = null;
-    SimpleDateFormat sdf = new SimpleDateFormat(Settings.DATE_FORMAT);
+    private LocalDate mDate = null;
+    DateTimeFormatter mSdf = DateTimeFormat.forPattern(Settings.DATE_FORMAT);
     ParseFile mImageFile;
     String mCurrentPhotoPath;
 
@@ -113,12 +115,8 @@ public class ImageActivity extends AppCompatActivity implements DatePickerFragme
 
         String dateStr = this.getIntent().getExtras().getString(PARAM_DATE);
         if (dateStr != null) {
-            try {
-                mDate = sdf.parse(dateStr);
-                mDateButton.setText(dateStr);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
+            mDate = mSdf.parseLocalDate(dateStr);
+            mDateButton.setText(dateStr);
         }
 
         if (mode == Mode.UPDATE) {
@@ -332,29 +330,19 @@ public class ImageActivity extends AppCompatActivity implements DatePickerFragme
         DialogFragment newFragment = new DatePickerFragment();
         Bundle args = new Bundle();
 
-        Calendar cal = Calendar.getInstance();
-
-        if (mDate != null) {
-            cal.setTime(mDate);
-        }
-
-        int year = cal.get(Calendar.YEAR);
-        int month = cal.get(Calendar.MONTH);
-        int day = cal.get(Calendar.DAY_OF_MONTH);
-
-        args.putInt(DatePickerFragment.ARG_YEAR, year);
-        args.putInt(DatePickerFragment.ARG_MONTH, month);
-        args.putInt(DatePickerFragment.ARG_DAY, day);
+        args.putInt(DatePickerFragment.ARG_YEAR, mDate.getYear());
+        args.putInt(DatePickerFragment.ARG_MONTH, mDate.getMonthOfYear());
+        args.putInt(DatePickerFragment.ARG_DAY, mDate.getDayOfMonth());
 
         newFragment.setArguments(args);
         newFragment.show(getSupportFragmentManager(), "datePicker");
     }
 
     public void onFragmentDateSetListener(Date newDate) {
-        mDate = newDate;
+        mDate = new LocalDate(newDate);
 
-        Log.d("MyApp", "onFragmentDateSetListener called, Date: " + sdf.format(mDate));
-        mDateButton.setText(sdf.format(mDate));
+        Log.d("MyApp", "onFragmentDateSetListener called, Date: " + mSdf.print(mDate));
+        mDateButton.setText(mSdf.print(mDate));
     }
 
     private void selectImage() {
