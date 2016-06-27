@@ -27,7 +27,7 @@ import de.haw.yumiii.supercalendar.rest.model.UserItem;
 /**
  * Created by Yumiii on 23.05.16.
  */
-public class TodoAdapter extends BaseAdapter {
+public class UserItemAdapter extends BaseAdapter {
 
     private Context mContext;
     private LayoutInflater mInflater;
@@ -35,7 +35,7 @@ public class TodoAdapter extends BaseAdapter {
 
     ParseImageView mImageView;
 
-    public TodoAdapter(Context context, ArrayList<Object> items) {
+    public UserItemAdapter(Context context, ArrayList<Object> items) {
         mContext = context;
         mDataSource = items;
         mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);

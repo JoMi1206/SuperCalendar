@@ -16,18 +16,15 @@ import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 import de.haw.yumiii.supercalendar.R;
-import de.haw.yumiii.supercalendar.dayoverview.TodoAdapter;
+import de.haw.yumiii.supercalendar.dayoverview.UserItemAdapter;
 import de.haw.yumiii.supercalendar.rest.model.ImageItem;
 import de.haw.yumiii.supercalendar.rest.model.TodoItem;
 import de.haw.yumiii.supercalendar.rest.model.UserItem;
-import de.haw.yumiii.supercalendar.utils.Settings;
 
 public class MonthActivity extends AppCompatActivity {
 
@@ -58,7 +55,7 @@ public class MonthActivity extends AppCompatActivity {
 
         mListView = (ListView) findViewById(R.id.month_list_view);
         // Custom Adapter to show the items in a nice way
-        TodoAdapter adapter = new TodoAdapter(this, new ArrayList<Object>());
+        UserItemAdapter adapter = new UserItemAdapter(this, new ArrayList<Object>());
         mListView.setAdapter(adapter);
 
         mMonth = this.getIntent().getExtras().getInt(PARAM_MONTH);
@@ -188,7 +185,7 @@ public class MonthActivity extends AppCompatActivity {
             mItemList.addAll(itemsPerDay.get(i));
         }
 
-        TodoAdapter adapter = (TodoAdapter) mListView.getAdapter();
+        UserItemAdapter adapter = (UserItemAdapter) mListView.getAdapter();
         adapter.addAll(mItemList);
 
     }

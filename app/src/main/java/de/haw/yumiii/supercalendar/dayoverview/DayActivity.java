@@ -94,7 +94,7 @@ public class DayActivity extends AppCompatActivity implements DatePickerFragment
         mListView = (ListView) findViewById(R.id.day_list_view);
 
         // Custom Adapter to show the items in a nice way
-        TodoAdapter adapter = new TodoAdapter(this, new ArrayList<Object>());
+        UserItemAdapter adapter = new UserItemAdapter(this, new ArrayList<Object>());
         mListView.setAdapter(adapter);
 
         // Open the edit Activity to edit the selected Item
@@ -337,7 +337,7 @@ public class DayActivity extends AppCompatActivity implements DatePickerFragment
      * to the daily list and adds this list to the adapter.
      */
     private void filterDailyList() {
-        TodoAdapter adapter = (TodoAdapter) mListView.getAdapter();
+        UserItemAdapter adapter = (UserItemAdapter) mListView.getAdapter();
         adapter.clear();
         mUserItemListCurrentDay.clear();
 
