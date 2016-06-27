@@ -51,7 +51,7 @@
                 android:value="false" />
         </activity>
         <activity
-            android:name=".dayoverview.DayActivity"
+            android:name=".overview.DayActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
@@ -59,9 +59,9 @@
             android:label="@string/title_activity_add_edit_todo">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".dayoverview.DayActivity" />
+                android:value=".overview.DayActivity" />
         </activity>
-        <activity android:name=".dayoverview.ChooseAddTypeActivity" />
+        <activity android:name=".overview.ChooseAddTypeActivity" />
         <activity android:name=".addupdate.ImageActivity" />
 
         <meta-data
@@ -81,7 +81,7 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <activity android:name=".monthoverview.MonthActivity"></activity>
+        <activity android:name=".overview.MonthActivity"></activity>
     </application>
 
 </manifest>

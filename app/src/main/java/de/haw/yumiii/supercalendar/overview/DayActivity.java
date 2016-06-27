@@ -1,4 +1,4 @@
-package de.haw.yumiii.supercalendar.dayoverview;
+package de.haw.yumiii.supercalendar.overview;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -38,7 +38,6 @@ import de.haw.yumiii.supercalendar.LoginDispatchActivity;
 import de.haw.yumiii.supercalendar.R;
 import de.haw.yumiii.supercalendar.addupdate.ImageActivity;
 import de.haw.yumiii.supercalendar.addupdate.TodoActivity;
-import de.haw.yumiii.supercalendar.monthoverview.MonthActivity;
 import de.haw.yumiii.supercalendar.rest.model.ImageItem;
 import de.haw.yumiii.supercalendar.rest.model.TodoItem;
 import de.haw.yumiii.supercalendar.utils.DatePickerFragment;

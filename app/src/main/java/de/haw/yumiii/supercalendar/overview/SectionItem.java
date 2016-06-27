@@ -1,4 +1,4 @@
-package de.haw.yumiii.supercalendar.monthoverview;
+package de.haw.yumiii.supercalendar.overview;
 
 /**
  * Created by Yumiii on 26.06.16.

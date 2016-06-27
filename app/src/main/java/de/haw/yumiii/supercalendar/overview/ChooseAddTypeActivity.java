@@ -1,4 +1,4 @@
-package de.haw.yumiii.supercalendar.dayoverview;
+package de.haw.yumiii.supercalendar.overview;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;

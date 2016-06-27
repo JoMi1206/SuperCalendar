@@ -1,4 +1,4 @@
-package de.haw.yumiii.supercalendar.monthoverview;
+package de.haw.yumiii.supercalendar.overview;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import de.haw.yumiii.supercalendar.R;
-import de.haw.yumiii.supercalendar.dayoverview.UserItemAdapter;
 import de.haw.yumiii.supercalendar.rest.model.ImageItem;
 import de.haw.yumiii.supercalendar.rest.model.TodoItem;
 import de.haw.yumiii.supercalendar.rest.model.UserItem;

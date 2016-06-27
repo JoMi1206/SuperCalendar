@@ -1,9 +1,8 @@
-package de.haw.yumiii.supercalendar.dayoverview;
+package de.haw.yumiii.supercalendar.overview;
 
 import android.content.Context;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,10 +18,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import de.haw.yumiii.supercalendar.R;
-import de.haw.yumiii.supercalendar.monthoverview.SectionItem;
 import de.haw.yumiii.supercalendar.rest.model.ImageItem;
 import de.haw.yumiii.supercalendar.rest.model.TodoItem;
-import de.haw.yumiii.supercalendar.rest.model.UserItem;
 
 /**
  * Created by Yumiii on 23.05.16.
